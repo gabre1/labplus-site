@@ -87,12 +87,16 @@ export async function fetchSiteContent(): Promise<SiteContent> {
         if (typeof dbData.about_benefits === 'string') {
           try {
             dbData.about_benefits = JSON.parse(dbData.about_benefits)
-          } catch (e) {}
+          } catch (e) {
+            console.warn('Failed to parse about_benefits', e)
+          }
         }
         if (typeof dbData.faq_items === 'string') {
           try {
             dbData.faq_items = JSON.parse(dbData.faq_items)
-          } catch (e) {}
+          } catch (e) {
+            console.warn('Failed to parse faq_items', e)
+          }
         }
 
         return { ...mockSiteContent, ...dbData }
