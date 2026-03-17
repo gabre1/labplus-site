@@ -19021,10 +19021,6 @@ var createLucideIcon = (iconName, iconNode) => {
 	Component.displayName = toPascalCase(iconName);
 	return Component;
 };
-var Activity = createLucideIcon("activity", [["path", {
-	d: "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2",
-	key: "169zse"
-}]]);
 var ArrowLeft = createLucideIcon("arrow-left", [["path", {
 	d: "m12 19-7-7 7-7",
 	key: "1l729n"
@@ -25833,79 +25829,120 @@ var mockSiteContent = {
 	nav_btn_diagnostic: "Solicitar Diagnóstico"
 };
 async function fetchSiteContent() {
+	try {
+		const response = await fetch("/api/collections/SiteContent/records");
+		if (response.ok) {
+			const data = await response.json();
+			if (data.items && data.items.length > 0) {
+				const dbData = data.items[0];
+				if (typeof dbData.about_benefits === "string") try {
+					dbData.about_benefits = JSON.parse(dbData.about_benefits);
+				} catch (e) {}
+				if (typeof dbData.faq_items === "string") try {
+					dbData.faq_items = JSON.parse(dbData.faq_items);
+				} catch (e) {}
+				return {
+					...mockSiteContent,
+					...dbData
+				};
+			}
+		}
+	} catch (error) {
+		console.warn("Backend fetch failed for SiteContent, using mock data.", error);
+	}
 	return new Promise((resolve) => setTimeout(() => resolve(mockSiteContent), 300));
 }
+var mockShowcaseItems = [
+	{
+		id: "1",
+		title: "Analisador Bioquímico BS-200",
+		description: "Equipamento semi-novo, totalmente revisado com garantia de 6 meses. Ideal para laboratórios de pequeno porte.",
+		image: "https://img.usecurling.com/p/400/300?q=laboratory%20machine",
+		badge: "Última Unidade"
+	},
+	{
+		id: "2",
+		title: "Reagentes Hematologia (Lote Curto)",
+		description: "Kit completo de reagentes para linha Sysmex com vencimento em 45 dias. Desconto especial.",
+		image: "https://img.usecurling.com/p/400/300?q=medical%20vials",
+		badge: "Validade Curta - 40% OFF"
+	},
+	{
+		id: "3",
+		title: "Centrífuga de Bancada 4000 RPM",
+		description: "Mostruário. Perfeito estado de conservação. Excelente custo-benefício para rotinas básicas.",
+		image: "https://img.usecurling.com/p/400/300?q=centrifuge",
+		badge: "Mostruário"
+	},
+	{
+		id: "4",
+		title: "Microscópio Binocular LED",
+		description: "Óptica infinita, iluminação LED de alta durabilidade. Pronta entrega em nosso CD em Maceió.",
+		image: "https://img.usecurling.com/p/400/300?q=microscope",
+		badge: "Pronta Entrega"
+	}
+];
 async function fetchShowcaseItems() {
-	return new Promise((resolve) => setTimeout(() => resolve([
-		{
-			id: "1",
-			title: "Analisador Bioquímico BS-200",
-			description: "Equipamento semi-novo, totalmente revisado com garantia de 6 meses. Ideal para laboratórios de pequeno porte.",
-			image: "https://img.usecurling.com/p/400/300?q=laboratory%20machine",
-			badge: "Última Unidade"
-		},
-		{
-			id: "2",
-			title: "Reagentes Hematologia (Lote Curto)",
-			description: "Kit completo de reagentes para linha Sysmex com vencimento em 45 dias. Desconto especial.",
-			image: "https://img.usecurling.com/p/400/300?q=medical%20vials",
-			badge: "Validade Curta - 40% OFF"
-		},
-		{
-			id: "3",
-			title: "Centrífuga de Bancada 4000 RPM",
-			description: "Mostruário. Perfeito estado de conservação. Excelente custo-benefício para rotinas básicas.",
-			image: "https://img.usecurling.com/p/400/300?q=centrifuge",
-			badge: "Mostruário"
-		},
-		{
-			id: "4",
-			title: "Microscópio Binocular LED",
-			description: "Óptica infinita, iluminação LED de alta durabilidade. Pronta entrega em nosso CD em Maceió.",
-			image: "https://img.usecurling.com/p/400/300?q=microscope",
-			badge: "Pronta Entrega"
+	try {
+		const response = await fetch("/api/collections/ShowcaseItems/records");
+		if (response.ok) {
+			const data = await response.json();
+			if (data.items && data.items.length > 0) return data.items;
 		}
-	]), 300));
+	} catch (error) {
+		console.warn("Backend fetch failed for ShowcaseItems, using mock data.", error);
+	}
+	return new Promise((resolve) => setTimeout(() => resolve(mockShowcaseItems), 300));
 }
+var mockCatalogItems = [
+	{
+		id: "c1",
+		equipment_name: "Mindray BC-3000 Plus (Hematologia 3 Partes)",
+		value: "Sob Consulta",
+		provider: "Mindray",
+		pdf_link: "#",
+		payment_conditions: "Até 24x sem juros",
+		recommendation_tags: "Humano, Hematologia, Até 50, 51 a 200"
+	},
+	{
+		id: "c2",
+		equipment_name: "Sysmex XN-L (Hematologia 5 Partes)",
+		value: "Sob Consulta",
+		provider: "Sysmex",
+		pdf_link: "#",
+		payment_conditions: "Leasing ou Financiamento",
+		recommendation_tags: "Humano, Hematologia, 201 a 300, Acima de 300"
+	},
+	{
+		id: "c3",
+		equipment_name: "Bioclin 200 (Bioquímica Automatizada)",
+		value: "Sob Consulta",
+		provider: "Bioclin",
+		pdf_link: "#",
+		payment_conditions: "Até 12x",
+		recommendation_tags: "Humano, Bioquímica, 51 a 200, 201 a 300"
+	},
+	{
+		id: "c4",
+		equipment_name: "Mindray BC-2800 Vet (Hematologia Veterinária)",
+		value: "Sob Consulta",
+		provider: "Mindray",
+		pdf_link: "#",
+		payment_conditions: "Até 18x",
+		recommendation_tags: "Veterinário, Hematologia, Até 50, 51 a 200, 201 a 300, Acima de 300"
+	}
+];
 async function fetchCatalogItems() {
-	return new Promise((resolve) => setTimeout(() => resolve([
-		{
-			id: "c1",
-			equipment_name: "Mindray BC-3000 Plus (Hematologia 3 Partes)",
-			value: "Sob Consulta",
-			provider: "Mindray",
-			pdf_link: "#",
-			payment_conditions: "Até 24x sem juros",
-			recommendation_tags: "Humano, Hematologia, Até 50, 51 a 200"
-		},
-		{
-			id: "c2",
-			equipment_name: "Sysmex XN-L (Hematologia 5 Partes)",
-			value: "Sob Consulta",
-			provider: "Sysmex",
-			pdf_link: "#",
-			payment_conditions: "Leasing ou Financiamento",
-			recommendation_tags: "Humano, Hematologia, 201 a 300, Acima de 300"
-		},
-		{
-			id: "c3",
-			equipment_name: "Bioclin 200 (Bioquímica Automatizada)",
-			value: "Sob Consulta",
-			provider: "Bioclin",
-			pdf_link: "#",
-			payment_conditions: "Até 12x",
-			recommendation_tags: "Humano, Bioquímica, 51 a 200, 201 a 300"
-		},
-		{
-			id: "c4",
-			equipment_name: "Mindray BC-2800 Vet (Hematologia Veterinária)",
-			value: "Sob Consulta",
-			provider: "Mindray",
-			pdf_link: "#",
-			payment_conditions: "Até 18x",
-			recommendation_tags: "Veterinário, Hematologia, Até 50, 51 a 200, 201 a 300, Acima de 300"
+	try {
+		const response = await fetch("/api/collections/CatalogItems/records");
+		if (response.ok) {
+			const data = await response.json();
+			if (data.items && data.items.length > 0) return data.items;
 		}
-	]), 300));
+	} catch (error) {
+		console.warn("Backend fetch failed for CatalogItems, using mock data.", error);
+	}
+	return new Promise((resolve) => setTimeout(() => resolve(mockCatalogItems), 300));
 }
 //#endregion
 //#region src/contexts/CmsContext.tsx
@@ -25940,46 +25977,48 @@ function Header$1() {
 	const { content } = useCms();
 	const navLinks = content ? [
 		{
-			name: content.nav_about,
+			name: content.nav_about || "Sobre Nós",
 			href: "/#sobre"
 		},
 		{
-			name: content.nav_showcase,
+			name: content.nav_showcase || "Oportunidades",
 			href: "/#oportunidades"
 		},
 		{
-			name: content.nav_faq,
+			name: content.nav_faq || "FAQ",
 			href: "/#faq"
 		},
 		{
-			name: content.nav_contact,
+			name: content.nav_contact || "Contato",
 			href: "/#contato"
 		}
 	] : [];
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("header", {
 		"data-uid": "src/components/Header.tsx:22:5",
 		"data-prohibitions": "[editContent]",
-		className: "sticky top-0 z-50 w-full glass-header",
+		className: "sticky top-0 z-50 w-full glass-header bg-white/80 backdrop-blur-md border-b",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 			"data-uid": "src/components/Header.tsx:23:7",
 			"data-prohibitions": "[editContent]",
-			className: "container mx-auto px-4 h-16 flex items-center justify-between",
+			className: "container mx-auto px-4 h-20 flex items-center justify-between",
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 					"data-uid": "src/components/Header.tsx:24:9",
 					"data-prohibitions": "[]",
 					to: "/",
 					className: "flex items-center gap-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Activity, {
+					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 						"data-uid": "src/components/Header.tsx:25:11",
 						"data-prohibitions": "[editContent]",
-						className: "h-6 w-6 text-primary"
+						src: "https://img.usecurling.com/i?q=labplus&color=blue&shape=outline",
+						alt: "Labplus Diagnóstica",
+						className: "h-10 w-auto"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						"data-uid": "src/components/Header.tsx:26:11",
+						"data-uid": "src/components/Header.tsx:30:11",
 						"data-prohibitions": "[]",
-						className: "font-bold text-xl tracking-tight",
+						className: "font-bold text-2xl tracking-tight hidden sm:block",
 						children: ["LAB", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/components/Header.tsx:27:16",
+							"data-uid": "src/components/Header.tsx:31:16",
 							"data-prohibitions": "[]",
 							className: "text-primary",
 							children: "PLUS"
@@ -25987,98 +26026,98 @@ function Header$1() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-					"data-uid": "src/components/Header.tsx:32:9",
+					"data-uid": "src/components/Header.tsx:36:9",
 					"data-prohibitions": "[editContent]",
 					className: "hidden md:flex items-center gap-8",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/Header.tsx:33:11",
+						"data-uid": "src/components/Header.tsx:37:11",
 						"data-prohibitions": "[editContent]",
 						className: "flex gap-6 text-sm font-medium text-muted-foreground",
 						children: navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							"data-uid": "src/components/Header.tsx:35:15",
+							"data-uid": "src/components/Header.tsx:39:15",
 							"data-prohibitions": "[editContent]",
 							href: link.href,
 							className: "hover:text-primary transition-colors",
 							children: link.name
 						}, link.name))
 					}), content && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						"data-uid": "src/components/Header.tsx:41:13",
+						"data-uid": "src/components/Header.tsx:45:13",
 						"data-prohibitions": "[editContent]",
 						asChild: true,
 						className: "rounded-full px-6",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-							"data-uid": "src/components/Header.tsx:42:15",
+							"data-uid": "src/components/Header.tsx:46:15",
 							"data-prohibitions": "[editContent]",
 							to: "/diagnostico",
-							children: content.nav_btn_diagnostic
+							children: content.nav_btn_diagnostic || "Solicitar Diagnóstico"
 						})
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/Header.tsx:48:9",
+					"data-uid": "src/components/Header.tsx:52:9",
 					"data-prohibitions": "[editContent]",
 					className: "md:hidden",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, {
-						"data-uid": "src/components/Header.tsx:49:11",
+						"data-uid": "src/components/Header.tsx:53:11",
 						"data-prohibitions": "[editContent]",
 						open: isOpen,
 						onOpenChange: setIsOpen,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetTrigger, {
-							"data-uid": "src/components/Header.tsx:50:13",
+							"data-uid": "src/components/Header.tsx:54:13",
 							"data-prohibitions": "[]",
 							asChild: true,
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-								"data-uid": "src/components/Header.tsx:51:15",
+								"data-uid": "src/components/Header.tsx:55:15",
 								"data-prohibitions": "[]",
 								variant: "ghost",
 								size: "icon",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, {
-									"data-uid": "src/components/Header.tsx:52:17",
+									"data-uid": "src/components/Header.tsx:56:17",
 									"data-prohibitions": "[editContent]",
 									className: "h-6 w-6"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/Header.tsx:53:17",
+									"data-uid": "src/components/Header.tsx:57:17",
 									"data-prohibitions": "[]",
 									className: "sr-only",
 									children: "Toggle menu"
 								})]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SheetContent, {
-							"data-uid": "src/components/Header.tsx:56:13",
+							"data-uid": "src/components/Header.tsx:60:13",
 							"data-prohibitions": "[editContent]",
 							side: "right",
 							className: "w-[300px] sm:w-[400px]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetTitle, {
-								"data-uid": "src/components/Header.tsx:57:15",
+								"data-uid": "src/components/Header.tsx:61:15",
 								"data-prohibitions": "[]",
 								className: "text-left mb-6",
 								children: "Menu de Navegação"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-								"data-uid": "src/components/Header.tsx:58:15",
+								"data-uid": "src/components/Header.tsx:62:15",
 								"data-prohibitions": "[editContent]",
 								className: "flex flex-col gap-4",
 								children: [navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Header.tsx:60:19",
+									"data-uid": "src/components/Header.tsx:64:19",
 									"data-prohibitions": "[editContent]",
 									href: link.href,
 									onClick: () => setIsOpen(false),
 									className: "block px-2 py-1 text-lg font-medium hover:text-primary",
 									children: link.name
 								}, link.name)), content && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/components/Header.tsx:70:19",
+									"data-uid": "src/components/Header.tsx:74:19",
 									"data-prohibitions": "[editContent]",
 									className: "mt-4",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-										"data-uid": "src/components/Header.tsx:71:21",
+										"data-uid": "src/components/Header.tsx:75:21",
 										"data-prohibitions": "[editContent]",
 										asChild: true,
 										className: "w-full rounded-full",
 										onClick: () => setIsOpen(false),
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-											"data-uid": "src/components/Header.tsx:76:23",
+											"data-uid": "src/components/Header.tsx:80:23",
 											"data-prohibitions": "[editContent]",
 											to: "/diagnostico",
-											children: content.nav_btn_diagnostic
+											children: content.nav_btn_diagnostic || "Solicitar Diagnóstico"
 										})
 									})
 								})]
@@ -26112,16 +26151,18 @@ function Footer() {
 							"data-uid": "src/components/Footer.tsx:11:11",
 							"data-prohibitions": "[]",
 							className: "flex items-center gap-2 text-white",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Activity, {
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
 								"data-uid": "src/components/Footer.tsx:12:13",
 								"data-prohibitions": "[editContent]",
-								className: "h-6 w-6 text-primary"
+								src: "https://img.usecurling.com/i?q=labplus&color=white&shape=outline",
+								alt: "Labplus Diagnóstica",
+								className: "h-8 w-auto"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/Footer.tsx:13:13",
+								"data-uid": "src/components/Footer.tsx:17:13",
 								"data-prohibitions": "[]",
 								className: "font-bold text-xl tracking-tight",
 								children: ["LAB", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/Footer.tsx:14:18",
+									"data-uid": "src/components/Footer.tsx:18:18",
 									"data-prohibitions": "[]",
 									className: "text-primary",
 									children: "PLUS"
@@ -26129,32 +26170,32 @@ function Footer() {
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							"data-uid": "src/components/Footer.tsx:17:11",
+							"data-uid": "src/components/Footer.tsx:21:11",
 							"data-prohibitions": "[]",
 							className: "text-sm text-gray-400",
 							children: "Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste."
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/Footer.tsx:20:11",
+							"data-uid": "src/components/Footer.tsx:24:11",
 							"data-prohibitions": "[]",
 							className: "flex gap-4 pt-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-								"data-uid": "src/components/Footer.tsx:21:13",
+								"data-uid": "src/components/Footer.tsx:25:13",
 								"data-prohibitions": "[]",
 								href: "#",
 								className: "hover:text-primary transition-colors",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Instagram, {
-									"data-uid": "src/components/Footer.tsx:22:15",
+									"data-uid": "src/components/Footer.tsx:26:15",
 									"data-prohibitions": "[editContent]",
 									className: "h-5 w-5"
 								})
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-								"data-uid": "src/components/Footer.tsx:24:13",
+								"data-uid": "src/components/Footer.tsx:28:13",
 								"data-prohibitions": "[]",
 								href: "#",
 								className: "hover:text-primary transition-colors",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Linkedin, {
-									"data-uid": "src/components/Footer.tsx:25:15",
+									"data-uid": "src/components/Footer.tsx:29:15",
 									"data-prohibitions": "[editContent]",
 									className: "h-5 w-5"
 								})
@@ -26163,23 +26204,23 @@ function Footer() {
 					]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/Footer.tsx:30:9",
+					"data-uid": "src/components/Footer.tsx:34:9",
 					"data-prohibitions": "[editContent]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						"data-uid": "src/components/Footer.tsx:31:11",
+						"data-uid": "src/components/Footer.tsx:35:11",
 						"data-prohibitions": "[]",
 						className: "text-white font-semibold mb-4",
 						children: "Links Rápidos"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-						"data-uid": "src/components/Footer.tsx:32:11",
+						"data-uid": "src/components/Footer.tsx:36:11",
 						"data-prohibitions": "[editContent]",
 						className: "space-y-2 text-sm",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:33:13",
+								"data-uid": "src/components/Footer.tsx:37:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:34:15",
+									"data-uid": "src/components/Footer.tsx:38:15",
 									"data-prohibitions": "[editContent]",
 									href: "/#sobre",
 									className: "hover:text-primary transition-colors",
@@ -26187,10 +26228,10 @@ function Footer() {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:38:13",
+								"data-uid": "src/components/Footer.tsx:42:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:39:15",
+									"data-uid": "src/components/Footer.tsx:43:15",
 									"data-prohibitions": "[editContent]",
 									href: "/#oportunidades",
 									className: "hover:text-primary transition-colors",
@@ -26198,10 +26239,10 @@ function Footer() {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:43:13",
+								"data-uid": "src/components/Footer.tsx:47:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:44:15",
+									"data-uid": "src/components/Footer.tsx:48:15",
 									"data-prohibitions": "[editContent]",
 									href: "/diagnostico",
 									className: "hover:text-primary transition-colors",
@@ -26209,10 +26250,10 @@ function Footer() {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:48:13",
+								"data-uid": "src/components/Footer.tsx:52:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:49:15",
+									"data-uid": "src/components/Footer.tsx:53:15",
 									"data-prohibitions": "[editContent]",
 									href: "/#faq",
 									className: "hover:text-primary transition-colors",
@@ -26223,47 +26264,47 @@ function Footer() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/Footer.tsx:56:9",
+					"data-uid": "src/components/Footer.tsx:60:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						"data-uid": "src/components/Footer.tsx:57:11",
+						"data-uid": "src/components/Footer.tsx:61:11",
 						"data-prohibitions": "[]",
 						className: "text-white font-semibold mb-4",
 						children: "Contato"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-						"data-uid": "src/components/Footer.tsx:58:11",
+						"data-uid": "src/components/Footer.tsx:62:11",
 						"data-prohibitions": "[]",
 						className: "space-y-3 text-sm",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-							"data-uid": "src/components/Footer.tsx:59:13",
+							"data-uid": "src/components/Footer.tsx:63:13",
 							"data-prohibitions": "[]",
 							className: "flex items-start gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
-								"data-uid": "src/components/Footer.tsx:60:15",
+								"data-uid": "src/components/Footer.tsx:64:15",
 								"data-prohibitions": "[editContent]",
 								className: "h-4 w-4 mt-0.5 text-primary shrink-0"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/Footer.tsx:61:15",
+								"data-uid": "src/components/Footer.tsx:65:15",
 								"data-prohibitions": "[]",
 								children: [
 									"(82) 3000-0000",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/Footer.tsx:63:17",
+										"data-uid": "src/components/Footer.tsx:67:17",
 										"data-prohibitions": "[editContent]"
 									}),
 									"(82) 99999-9999 (WhatsApp)"
 								]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-							"data-uid": "src/components/Footer.tsx:67:13",
+							"data-uid": "src/components/Footer.tsx:71:13",
 							"data-prohibitions": "[]",
 							className: "flex items-center gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
-								"data-uid": "src/components/Footer.tsx:68:15",
+								"data-uid": "src/components/Footer.tsx:72:15",
 								"data-prohibitions": "[editContent]",
 								className: "h-4 w-4 text-primary shrink-0"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/Footer.tsx:69:15",
+								"data-uid": "src/components/Footer.tsx:73:15",
 								"data-prohibitions": "[]",
 								children: "contato@labplus.com.br"
 							})]
@@ -26271,37 +26312,37 @@ function Footer() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/Footer.tsx:74:9",
+					"data-uid": "src/components/Footer.tsx:78:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						"data-uid": "src/components/Footer.tsx:75:11",
+						"data-uid": "src/components/Footer.tsx:79:11",
 						"data-prohibitions": "[]",
 						className: "text-white font-semibold mb-4",
 						children: "Localização"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-						"data-uid": "src/components/Footer.tsx:76:11",
+						"data-uid": "src/components/Footer.tsx:80:11",
 						"data-prohibitions": "[]",
 						className: "space-y-2 text-sm",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-							"data-uid": "src/components/Footer.tsx:77:13",
+							"data-uid": "src/components/Footer.tsx:81:13",
 							"data-prohibitions": "[]",
 							className: "flex items-start gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
-								"data-uid": "src/components/Footer.tsx:78:15",
+								"data-uid": "src/components/Footer.tsx:82:15",
 								"data-prohibitions": "[editContent]",
 								className: "h-4 w-4 mt-0.5 text-primary shrink-0"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/Footer.tsx:79:15",
+								"data-uid": "src/components/Footer.tsx:83:15",
 								"data-prohibitions": "[]",
 								children: [
 									"Av. Menino Marcelo, 1234",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/Footer.tsx:81:17",
+										"data-uid": "src/components/Footer.tsx:85:17",
 										"data-prohibitions": "[editContent]"
 									}),
 									"Serraria, Maceió - AL",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/Footer.tsx:83:17",
+										"data-uid": "src/components/Footer.tsx:87:17",
 										"data-prohibitions": "[editContent]"
 									}),
 									"CEP: 57000-000"
@@ -26312,11 +26353,11 @@ function Footer() {
 				})
 			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/Footer.tsx:91:7",
+			"data-uid": "src/components/Footer.tsx:95:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				"data-uid": "src/components/Footer.tsx:92:9",
+				"data-uid": "src/components/Footer.tsx:96:9",
 				"data-prohibitions": "[editContent]",
 				children: [
 					"© ",
@@ -30164,4 +30205,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-D4imA46E.js.map
+//# sourceMappingURL=index-D879ch8R.js.map

@@ -1024,6 +1024,10 @@ section[aria-label='Notifications alt+T'] {
   height: 0.625rem;
 }
 
+.h-20{
+  height: 5rem;
+}
+
 .h-3{
   height: 0.75rem;
 }
@@ -1907,6 +1911,10 @@ section[aria-label='Notifications alt+T'] {
   background-color: rgb(255 255 255 / 0.05);
 }
 
+.bg-white\/80{
+  background-color: rgb(255 255 255 / 0.8);
+}
+
 .bg-gradient-to-r{
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -2457,6 +2465,11 @@ section[aria-label='Notifications alt+T'] {
 
 .filter{
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.backdrop-blur-md{
+  --tw-backdrop-blur: blur(12px);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
 
 .transition{
@@ -3742,6 +3755,10 @@ section[aria-label='Notifications alt+T'] {
 
   .sm\:mt-0{
     margin-top: 0px;
+  }
+
+  .sm\:block{
+    display: block;
   }
 
   .sm\:flex{

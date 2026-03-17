@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
-import { Menu, Activity } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { useState } from 'react'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
 import { useCms } from '@/contexts/CmsContext'
@@ -11,19 +11,23 @@ export function Header() {
 
   const navLinks = content
     ? [
-        { name: content.nav_about, href: '/#sobre' },
-        { name: content.nav_showcase, href: '/#oportunidades' },
-        { name: content.nav_faq, href: '/#faq' },
-        { name: content.nav_contact, href: '/#contato' },
+        { name: content.nav_about || 'Sobre Nós', href: '/#sobre' },
+        { name: content.nav_showcase || 'Oportunidades', href: '/#oportunidades' },
+        { name: content.nav_faq || 'FAQ', href: '/#faq' },
+        { name: content.nav_contact || 'Contato', href: '/#contato' },
       ]
     : []
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-header">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full glass-header bg-white/80 backdrop-blur-md border-b">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <Activity className="h-6 w-6 text-primary" />
-          <span className="font-bold text-xl tracking-tight">
+          <img
+            src="https://img.usecurling.com/i?q=labplus&color=blue&shape=outline"
+            alt="Labplus Diagnóstica"
+            className="h-10 w-auto"
+          />
+          <span className="font-bold text-2xl tracking-tight hidden sm:block">
             LAB<span className="text-primary">PLUS</span>
           </span>
         </Link>
@@ -39,7 +43,7 @@ export function Header() {
           </div>
           {content && (
             <Button asChild className="rounded-full px-6">
-              <Link to="/diagnostico">{content.nav_btn_diagnostic}</Link>
+              <Link to="/diagnostico">{content.nav_btn_diagnostic || 'Solicitar Diagnóstico'}</Link>
             </Button>
           )}
         </nav>
@@ -73,7 +77,9 @@ export function Header() {
                       className="w-full rounded-full"
                       onClick={() => setIsOpen(false)}
                     >
-                      <Link to="/diagnostico">{content.nav_btn_diagnostic}</Link>
+                      <Link to="/diagnostico">
+                        {content.nav_btn_diagnostic || 'Solicitar Diagnóstico'}
+                      </Link>
                     </Button>
                   </div>
                 )}

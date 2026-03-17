@@ -1,4 +1,4 @@
-import { Activity, MapPin, Phone, Mail, Instagram, Linkedin } from 'lucide-react'
+import { MapPin, Phone, Mail, Instagram, Linkedin } from 'lucide-react'
 import { useCms } from '@/contexts/CmsContext'
 
 export function Footer() {
@@ -9,7 +9,11 @@ export function Footer() {
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-white">
-            <Activity className="h-6 w-6 text-primary" />
+            <img
+              src="https://img.usecurling.com/i?q=labplus&color=white&shape=outline"
+              alt="Labplus Diagnóstica"
+              className="h-8 w-auto"
+            />
             <span className="font-bold text-xl tracking-tight">
               LAB<span className="text-primary">PLUS</span>
             </span>
