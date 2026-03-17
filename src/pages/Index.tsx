@@ -1,12 +1,34 @@
-/* Home Page - Replace this page layout, components, content, behavior with what you want and translate to the language of the user */
-const Index = () => {
+import { HeroSection } from '@/components/sections/HeroSection'
+import { AboutSection } from '@/components/sections/AboutSection'
+import { ShowcaseSection } from '@/components/sections/ShowcaseSection'
+import { FAQSection } from '@/components/sections/FAQSection'
+import { ContactSection } from '@/components/sections/ContactSection'
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+
+export default function Index() {
+  const { hash } = useLocation()
+
+  useEffect(() => {
+    if (hash) {
+      const element = document.getElementById(hash.replace('#', ''))
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
+      }
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }, [hash])
+
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">
-        This is a example page ready to be rewritten with your own content
-      </h1>
+    <div className="w-full">
+      <HeroSection />
+      <AboutSection />
+      <ShowcaseSection />
+      <FAQSection />
+      <ContactSection />
     </div>
   )
 }
-
-export default Index
