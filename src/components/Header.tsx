@@ -3,16 +3,20 @@ import { Button } from '@/components/ui/button'
 import { Menu, Activity } from 'lucide-react'
 import { useState } from 'react'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'
+import { useCms } from '@/contexts/CmsContext'
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { content } = useCms()
 
-  const navLinks = [
-    { name: 'Sobre Nós', href: '/#sobre' },
-    { name: 'Oportunidades', href: '/#oportunidades' },
-    { name: 'FAQ', href: '/#faq' },
-    { name: 'Contato', href: '/#contato' },
-  ]
+  const navLinks = content
+    ? [
+        { name: content.nav_about, href: '/#sobre' },
+        { name: content.nav_showcase, href: '/#oportunidades' },
+        { name: content.nav_faq, href: '/#faq' },
+        { name: content.nav_contact, href: '/#contato' },
+      ]
+    : []
 
   return (
     <header className="sticky top-0 z-50 w-full glass-header">
@@ -33,9 +37,11 @@ export function Header() {
               </a>
             ))}
           </div>
-          <Button asChild className="rounded-full px-6">
-            <Link to="/diagnostico">Solicitar Diagnóstico</Link>
-          </Button>
+          {content && (
+            <Button asChild className="rounded-full px-6">
+              <Link to="/diagnostico">{content.nav_btn_diagnostic}</Link>
+            </Button>
+          )}
         </nav>
 
         {/* Mobile Nav */}
@@ -60,11 +66,17 @@ export function Header() {
                     {link.name}
                   </a>
                 ))}
-                <div className="mt-4">
-                  <Button asChild className="w-full rounded-full" onClick={() => setIsOpen(false)}>
-                    <Link to="/diagnostico">Solicitar Diagnóstico</Link>
-                  </Button>
-                </div>
+                {content && (
+                  <div className="mt-4">
+                    <Button
+                      asChild
+                      className="w-full rounded-full"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link to="/diagnostico">{content.nav_btn_diagnostic}</Link>
+                    </Button>
+                  </div>
+                )}
               </nav>
             </SheetContent>
           </Sheet>

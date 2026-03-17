@@ -1,6 +1,11 @@
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
+import { useCms } from '@/contexts/CmsContext'
 
 export function ContactSection() {
+  const { content } = useCms()
+
+  if (!content) return null
+
   return (
     <section id="contato" className="py-24 bg-slate-50 border-t border-border">
       <div className="container mx-auto px-4">
@@ -8,12 +13,10 @@ export function ContactSection() {
           <div className="space-y-8">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                Localização e <span className="text-primary">Contato</span>
+                {content.contact_title_1}{' '}
+                <span className="text-primary">{content.contact_title_highlight}</span>
               </h2>
-              <p className="text-muted-foreground text-lg">
-                Nossa matriz está localizada estrategicamente para atender sua demanda com máxima
-                velocidade.
-              </p>
+              <p className="text-muted-foreground text-lg">{content.contact_subtitle}</p>
             </div>
 
             <div className="space-y-6">

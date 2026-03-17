@@ -2310,6 +2310,11 @@ section[aria-label='Notifications alt+T'] {
   color: rgb(22 163 74 / var(--tw-text-opacity, 1));
 }
 
+.text-green-700{
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity, 1));
+}
+
 .text-muted-foreground{
   color: hsl(var(--muted-foreground));
 }

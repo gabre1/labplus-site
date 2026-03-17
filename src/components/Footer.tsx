@@ -1,6 +1,9 @@
 import { Activity, MapPin, Phone, Mail, Instagram, Linkedin } from 'lucide-react'
+import { useCms } from '@/contexts/CmsContext'
 
 export function Footer() {
+  const { content } = useCms()
+
   return (
     <footer className="bg-[#0A0A0A] text-gray-300 py-12 border-t border-gray-800">
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -29,22 +32,22 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li>
               <a href="/#sobre" className="hover:text-primary transition-colors">
-                Sobre Nós
+                {content?.nav_about || 'Sobre Nós'}
               </a>
             </li>
             <li>
               <a href="/#oportunidades" className="hover:text-primary transition-colors">
-                Vitrine de Oportunidades
+                {content?.nav_showcase || 'Vitrine de Oportunidades'}
               </a>
             </li>
             <li>
               <a href="/diagnostico" className="hover:text-primary transition-colors">
-                Diagnóstico Consultivo
+                {content?.nav_btn_diagnostic || 'Diagnóstico Consultivo'}
               </a>
             </li>
             <li>
               <a href="/#faq" className="hover:text-primary transition-colors">
-                Perguntas Frequentes
+                {content?.nav_faq || 'Perguntas Frequentes'}
               </a>
             </li>
           </ul>

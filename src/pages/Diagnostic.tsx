@@ -3,7 +3,8 @@ import { Progress } from '@/components/ui/progress'
 import { Card } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { DiagnosticFormData, CatalogItem } from '@/types'
-import { catalogItems } from '@/lib/data'
+import { useCms } from '@/contexts/CmsContext'
+import { fetchCatalogItems } from '@/lib/api'
 
 import { Step1Personal } from '@/components/diagnostic/Step1Personal'
 import { Step2Segment } from '@/components/diagnostic/Step2Segment'
@@ -14,6 +15,7 @@ import { StepSuccess } from '@/components/diagnostic/StepSuccess'
 const TOTAL_STEPS = 4
 
 export default function Diagnostic() {
+  const { content } = useCms()
   const [step, setStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [matchResult, setMatchResult] = useState<CatalogItem | null>(null)
@@ -35,37 +37,65 @@ export default function Diagnostic() {
   const nextStep = () => setStep((prev) => Math.min(prev + 1, TOTAL_STEPS))
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1))
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true)
 
-    // Simulate API call and Match Logic
-    setTimeout(() => {
-      let matchedItem = catalogItems.find(
-        (item) =>
-          item.tags.includes(formData.segment) &&
-          item.tags.includes(formData.type) &&
-          item.tags.includes(formData.volume),
-      )
+    try {
+      const catalogItems = await fetchCatalogItems()
 
-      // Fallback if strict match fails (just for demo purposes to avoid empty results)
+      let matchedItem = catalogItems.find((item) => {
+        const tags = item.recommendation_tags.toLowerCase()
+        return (
+          tags.includes(formData.segment.toLowerCase()) &&
+          tags.includes(formData.type.toLowerCase()) &&
+          tags.includes(formData.volume.toLowerCase())
+        )
+      })
+
       if (!matchedItem) {
         matchedItem =
-          catalogItems.find((item) => item.tags.includes(formData.type)) || catalogItems[0]
+          catalogItems.find((item) =>
+            item.recommendation_tags.toLowerCase().includes(formData.type.toLowerCase()),
+          ) || catalogItems[0]
       }
 
       setMatchResult(matchedItem)
-      setIsLoading(false)
-      setStep(5) // Success step
 
-      // Demo CMS Lead Notification
-      console.log('--- NOVO LEAD RECEBIDO ---', { lead: formData, recomendacao: matchedItem })
+      console.log('--- NOVO LEAD RECEBIDO (ALERTA INTERNO VENDAS) ---', {
+        LeadData: {
+          Nome: formData.name,
+          Telefone: formData.phone,
+        },
+        City: formData.city,
+        Routine: {
+          Segmento: formData.segment,
+          Equipamento: formData.type,
+          Volume: formData.volume,
+        },
+        MatchedEquipment: {
+          Name: matchedItem.equipment_name,
+          Value: matchedItem.value,
+          Provider: matchedItem.provider,
+          Link: matchedItem.pdf_link,
+          Conditions: matchedItem.payment_conditions,
+        },
+      })
+
       toast({
-        title: 'Alerta Interno (Simulação)',
-        description: `Lead: ${formData.name} - Match: ${matchedItem.equipmentName}`,
+        title: '🚨 Alerta Interno de Vendas',
+        description: `Lead: ${formData.name} - Match: ${matchedItem.equipment_name}`,
         duration: 8000,
       })
-    }, 1500)
+
+      setStep(5)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
+
+  if (!content) return null
 
   const progress = (step / TOTAL_STEPS) * 100
 
@@ -73,7 +103,8 @@ export default function Diagnostic() {
     <div className="min-h-[calc(100vh-4rem)] bg-slate-50 py-12 px-4 flex flex-col items-center">
       <div className="w-full max-w-3xl mb-8">
         <h1 className="text-3xl font-bold text-center mb-6 text-foreground">
-          Diagnóstico <span className="text-primary">Consultivo</span>
+          {content.diagnostic_title_1}{' '}
+          <span className="text-primary">{content.diagnostic_title_highlight}</span>
         </h1>
         {step <= TOTAL_STEPS && (
           <div className="space-y-2">

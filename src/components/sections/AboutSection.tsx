@@ -1,12 +1,10 @@
 import { CheckCircle2 } from 'lucide-react'
+import { useCms } from '@/contexts/CmsContext'
 
 export function AboutSection() {
-  const benefits = [
-    'Agilidade Logística em todo o Nordeste',
-    'Estoque estratégico e peças de reposição',
-    'Equipe técnica altamente qualificada',
-    'Atendimento consultivo e personalizado',
-  ]
+  const { content } = useCms()
+
+  if (!content) return null
 
   return (
     <section id="sobre" className="py-24 bg-background">
@@ -28,17 +26,13 @@ export function AboutSection() {
 
           <div className="space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-              Infraestrutura Robusta para o seu <span className="text-primary">Crescimento</span>
+              {content.about_title_1}{' '}
+              <span className="text-primary">{content.about_title_highlight}</span>
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              A Labplus Diagnóstica nasceu com o propósito de elevar o padrão do suporte
-              laboratorial. Localizados estrategicamente em Maceió, Alagoas, garantimos agilidade
-              logística incomparável para suprir as necessidades da sua rotina, seja com reagentes,
-              insumos ou manutenção de equipamentos.
-            </p>
+            <p className="text-muted-foreground text-lg leading-relaxed">{content.about_text}</p>
 
             <ul className="space-y-4 mt-8">
-              {benefits.map((benefit, index) => (
+              {content.about_benefits.map((benefit, index) => (
                 <li key={index} className="flex items-center gap-3">
                   <CheckCircle2 className="h-6 w-6 text-primary shrink-0" />
                   <span className="font-medium">{benefit}</span>

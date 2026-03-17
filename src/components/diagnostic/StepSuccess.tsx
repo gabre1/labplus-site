@@ -3,12 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle, FileText, Share2, Home } from 'lucide-react'
 import { CatalogItem } from '@/types'
 import { Link } from 'react-router-dom'
+import { useCms } from '@/contexts/CmsContext'
 
 interface Props {
   match: CatalogItem | null
 }
 
 export function StepSuccess({ match }: Props) {
+  const { content } = useCms()
+
   return (
     <div className="space-y-8 animate-fade-in-up py-4">
       <div className="text-center space-y-4">
@@ -18,9 +21,9 @@ export function StepSuccess({ match }: Props) {
           </div>
         </div>
         <h2 className="text-3xl font-bold text-foreground">Diagnóstico Concluído!</h2>
-        <p className="text-lg text-muted-foreground max-w-lg mx-auto">
-          Informações recebidas com sucesso. Com base no seu perfil, nossa inteligência selecionou a
-          melhor solução para o seu laboratório.
+        <p className="text-lg text-muted-foreground max-w-lg mx-auto font-medium text-green-700">
+          {content?.diagnostic_success_msg ||
+            'Informações recebidas com sucesso! Em breve, um especialista entrará em contato com a melhor solução.'}
         </p>
       </div>
 
@@ -32,13 +35,13 @@ export function StepSuccess({ match }: Props) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <h3 className="text-2xl font-bold text-foreground">{match.equipmentName}</h3>
+            <h3 className="text-2xl font-bold text-foreground">{match.equipment_name}</h3>
             <div className="flex justify-center gap-4 text-sm text-muted-foreground pt-2">
               <span className="bg-white px-3 py-1 rounded-full border border-border shadow-sm">
-                Fabricante: {match.supplier}
+                Fabricante: {match.provider}
               </span>
               <span className="bg-white px-3 py-1 rounded-full border border-border shadow-sm">
-                {match.paymentTerms}
+                {match.payment_conditions}
               </span>
             </div>
             <p className="pt-4 text-muted-foreground">

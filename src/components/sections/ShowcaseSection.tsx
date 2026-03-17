@@ -1,10 +1,22 @@
+import { useEffect, useState } from 'react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { showcaseItems } from '@/lib/data'
 import { MessageCircle } from 'lucide-react'
+import { useCms } from '@/contexts/CmsContext'
+import { fetchShowcaseItems } from '@/lib/api'
+import { ShowcaseItem } from '@/types'
 
 export function ShowcaseSection() {
+  const { content } = useCms()
+  const [items, setItems] = useState<ShowcaseItem[]>([])
+
+  useEffect(() => {
+    fetchShowcaseItems().then(setItems)
+  }, [])
+
+  if (!content) return null
+
   const getWhatsAppLink = (itemName: string) => {
     const text = encodeURIComponent(
       `Olá! Tenho interesse no item "${itemName}" da Vitrine de Oportunidades.`,
@@ -17,19 +29,17 @@ export function ShowcaseSection() {
       <div className="container mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <Badge variant="outline" className="mb-4 border-primary text-primary">
-            Estoque Limitado
+            {content.showcase_badge}
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-            Vitrine de <span className="text-primary">Oportunidades</span>
+            {content.showcase_title_1}{' '}
+            <span className="text-primary">{content.showcase_title_highlight}</span>
           </h2>
-          <p className="text-muted-foreground text-lg">
-            Equipamentos de mostruário, seminovos revisados e insumos com validade curta. Condições
-            exclusivas para fechamento rápido.
-          </p>
+          <p className="text-muted-foreground text-lg">{content.showcase_subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {showcaseItems.map((item) => (
+          {items.map((item) => (
             <Card
               key={item.id}
               className="flex flex-col group hover:shadow-lg transition-all duration-300 border-border/50 overflow-hidden"

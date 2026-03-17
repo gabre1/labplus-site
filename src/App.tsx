@@ -6,20 +6,23 @@ import Layout from './components/Layout'
 import Index from './pages/Index'
 import Diagnostic from './pages/Diagnostic'
 import NotFound from './pages/NotFound'
+import { CmsProvider } from './contexts/CmsContext'
 
 const App = () => (
   <BrowserRouter future={{ v7_startTransition: false, v7_relativeSplatPath: false }}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/diagnostico" element={<Diagnostic />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
+    <CmsProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/diagnostico" element={<Diagnostic />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+    </CmsProvider>
   </BrowserRouter>
 )
 
