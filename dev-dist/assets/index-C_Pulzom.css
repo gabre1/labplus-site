@@ -826,6 +826,10 @@ section[aria-label='Notifications alt+T'] {
   z-index: 1;
 }
 
+.col-span-2{
+  grid-column: span 2 / span 2;
+}
+
 .-mx-1{
   margin-left: -0.25rem;
   margin-right: -0.25rem;
@@ -1112,6 +1116,10 @@ section[aria-label='Notifications alt+T'] {
   max-height: 300px;
 }
 
+.max-h-\[90vh\]{
+  max-height: 90vh;
+}
+
 .max-h-\[var\(--radix-dropdown-menu-content-available-height\)\]{
   max-height: var(--radix-dropdown-menu-content-available-height);
 }
@@ -1244,6 +1252,10 @@ section[aria-label='Notifications alt+T'] {
   width: 100px;
 }
 
+.w-\[150px\]{
+  width: 150px;
+}
+
 .w-\[1px\]{
   width: 1px;
 }
@@ -1318,8 +1330,16 @@ section[aria-label='Notifications alt+T'] {
   max-width: 48rem;
 }
 
+.max-w-6xl{
+  max-width: 72rem;
+}
+
 .max-w-\[--skeleton-width\]{
   max-width: var(--skeleton-width);
+}
+
+.max-w-\[400px\]{
+  max-width: 400px;
 }
 
 .max-w-lg{
@@ -1333,6 +1353,10 @@ section[aria-label='Notifications alt+T'] {
 
 .max-w-md{
   max-width: 28rem;
+}
+
+.max-w-sm{
+  max-width: 24rem;
 }
 
 .flex-1{
@@ -1483,6 +1507,10 @@ section[aria-label='Notifications alt+T'] {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
+.grid-cols-2{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .flex-row{
   flex-direction: row;
 }
@@ -1563,6 +1591,12 @@ section[aria-label='Notifications alt+T'] {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.25rem * var(--tw-space-x-reverse));
   margin-left: calc(0.25rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.space-x-2 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .space-x-3 > :not([hidden]) ~ :not([hidden]){
@@ -2082,6 +2116,11 @@ section[aria-label='Notifications alt+T'] {
 .py-6{
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
+}
+
+.py-8{
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .pb-3{

@@ -1,4 +1,5 @@
 import { ShowcaseItem, CatalogItem, SiteContent } from '@/types'
+import { supabase } from '@/lib/supabase/client'
 
 export const mockSiteContent: SiteContent = {
   logo_url: 'https://img.usecurling.com/i?q=labplus&color=blue&shape=outline',
@@ -87,79 +88,48 @@ export async function fetchSiteContent(): Promise<SiteContent> {
   return new Promise((resolve) => setTimeout(() => resolve(mockSiteContent), 300))
 }
 
-const mockShowcaseItems: ShowcaseItem[] = [
-  {
-    id: '1',
-    title: 'Analisador Bioquímico BS-200',
-    description: 'Equipamento semi-novo, totalmente revisado com garantia de 6 meses.',
-    image: 'https://img.usecurling.com/p/400/300?q=laboratory%20machine',
-    badge: 'Última Unidade',
-  },
-  {
-    id: '2',
-    title: 'Reagentes Hematologia',
-    description: 'Kit completo de reagentes para linha Sysmex com vencimento em 45 dias.',
-    image: 'https://img.usecurling.com/p/400/300?q=medical%20vials',
-    badge: 'Validade Curta - 40% OFF',
-  },
-]
-
 export async function fetchShowcaseItems(): Promise<ShowcaseItem[]> {
   try {
-    const backendUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_BACKEND_URL || ''
-    const url = backendUrl
-      ? `${backendUrl}/api/collections/ShowcaseItems/records`
-      : '/api/collections/ShowcaseItems/records'
-
-    const response = await fetch(url)
-    if (response.ok) {
-      const data = await response.json()
-      if (data.items && data.items.length > 0) {
-        return data.items.map((item: any) => ({
-          ...item,
-          image: getPbImageUrl(item, 'image') || item.image,
-        }))
-      }
+    const { data, error } = await supabase
+      .from('showcase_items')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (data && !error) {
+      return data.map((d) => ({
+        id: d.id,
+        title: d.title,
+        description: d.description || '',
+        image: d.image_url || '',
+        badge: d.label || '',
+      }))
     }
-  } catch (error) {
-    console.warn('Backend fetch failed for ShowcaseItems, using mock data.', error)
+  } catch (err) {
+    console.error('Supabase fetch failed for showcase_items', err)
   }
-  return new Promise((resolve) => setTimeout(() => resolve(mockShowcaseItems), 300))
+  return []
 }
-
-const mockCatalogItems: CatalogItem[] = [
-  {
-    id: 'c1',
-    equipment_name: 'Mindray BC-3000 Plus',
-    value: 'Sob Consulta',
-    provider: 'Mindray',
-    pdf_link: '#',
-    payment_conditions: 'Até 24x sem juros',
-    recommendation_tags: 'Humano, Hematologia, Até 50, 51 a 200',
-    image: 'https://img.usecurling.com/p/400/300?q=medical%20machine',
-    description: 'Analisador hematológico automatizado ideal para laboratórios de pequeno porte.',
-  },
-]
 
 export async function fetchCatalogItems(): Promise<CatalogItem[]> {
   try {
-    const backendUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_BACKEND_URL || ''
-    const url = backendUrl
-      ? `${backendUrl}/api/collections/CatalogItems/records`
-      : '/api/collections/CatalogItems/records'
-
-    const response = await fetch(url)
-    if (response.ok) {
-      const data = await response.json()
-      if (data.items && data.items.length > 0) {
-        return data.items.map((item: any) => ({
-          ...item,
-          image: getPbImageUrl(item, 'image') || item.image,
-        }))
-      }
+    const { data, error } = await supabase
+      .from('catalog_items')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (data && !error) {
+      return data.map((d) => ({
+        id: d.id,
+        equipment_name: d.name,
+        value: d.value || '',
+        provider: d.provider || '',
+        pdf_link: d.folder_url || '',
+        payment_conditions: d.payment_conditions || '',
+        recommendation_tags: d.recommendation_tags || '',
+        image: d.image_url || '',
+        description: d.description || '',
+      }))
     }
-  } catch (error) {
-    console.warn('Backend fetch failed for CatalogItems, using mock data.', error)
+  } catch (err) {
+    console.error('Supabase fetch failed for catalog_items', err)
   }
-  return new Promise((resolve) => setTimeout(() => resolve(mockCatalogItems), 300))
+  return []
 }
