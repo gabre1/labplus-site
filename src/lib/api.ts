@@ -62,30 +62,45 @@ function getPbImageUrl(item: any, fieldName: string) {
   return `${backendUrl}/api/files/${item.collectionId}/${item.id}/${fileName}`
 }
 
-export async function fetchSiteContent(): Promise<SiteContent> {
+export async function fetchSiteContent(): Promise<any> {
+  const content = { ...mockSiteContent } as any
+
   try {
+    // Legacy PocketBase Check (can be eventually removed if fully migrated)
     const backendUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_BACKEND_URL || ''
-    const url = backendUrl
-      ? `${backendUrl}/api/collections/SiteContent/records`
-      : '/api/collections/SiteContent/records'
-
-    const response = await fetch(url)
-    if (response.ok) {
-      const data = await response.json()
-      if (data.items && data.items.length > 0) {
-        const dbData = data.items[0]
-        if (typeof dbData.about_benefits === 'string')
-          dbData.about_benefits = JSON.parse(dbData.about_benefits)
-        if (typeof dbData.faq_items === 'string') dbData.faq_items = JSON.parse(dbData.faq_items)
-        if (dbData.logo_url) dbData.logo_url = getPbImageUrl(dbData, 'logo_url') || dbData.logo_url
-
-        return { ...mockSiteContent, ...dbData }
+    if (backendUrl) {
+      const url = `${backendUrl}/api/collections/SiteContent/records`
+      const response = await fetch(url)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.items && data.items.length > 0) {
+          const dbData = data.items[0]
+          if (typeof dbData.about_benefits === 'string')
+            dbData.about_benefits = JSON.parse(dbData.about_benefits)
+          if (typeof dbData.faq_items === 'string') dbData.faq_items = JSON.parse(dbData.faq_items)
+          if (dbData.logo_url)
+            dbData.logo_url = getPbImageUrl(dbData, 'logo_url') || dbData.logo_url
+          Object.assign(content, dbData)
+        }
       }
     }
   } catch (error) {
-    console.warn('Backend fetch failed for SiteContent, using mock data.', error)
+    console.warn('PocketBase fetch failed')
   }
-  return new Promise((resolve) => setTimeout(() => resolve(mockSiteContent), 300))
+
+  try {
+    // Supabase Dynamic Content Fetch
+    const { data, error } = await supabase.from('site_content' as any).select('*')
+    if (data && !error) {
+      data.forEach((item: any) => {
+        content[item.key] = item.value
+      })
+    }
+  } catch (error) {
+    console.warn('Supabase fetch failed for site_content', error)
+  }
+
+  return content
 }
 
 export async function fetchShowcaseItems(): Promise<ShowcaseItem[]> {

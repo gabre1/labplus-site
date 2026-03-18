@@ -71,15 +71,14 @@ export function Footer() {
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-2">
               <Phone className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-              <span>
-                (82) 3000-0000
-                <br />
-                (82) 99999-9999 (WhatsApp)
+              <span className="whitespace-pre-line">
+                {content?.contact_phone?.replace(' / ', '\n') ||
+                  '(82) 3000-0000\n(82) 99999-9999 (WhatsApp)'}
               </span>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-primary shrink-0" />
-              <span>contato@labplus.com.br</span>
+              <span>{content?.contact_email || 'contato@labplus.com.br'}</span>
             </li>
           </ul>
         </div>

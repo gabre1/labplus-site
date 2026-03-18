@@ -28,12 +28,18 @@ export function HeroSection() {
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-            {content.hero_title_1}{' '}
-            <span className="text-primary">{content.hero_title_highlight}</span>
+            {content.hero_title ? (
+              content.hero_title
+            ) : (
+              <>
+                {content.hero_title_1}{' '}
+                <span className="text-primary">{content.hero_title_highlight}</span>
+              </>
+            )}
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl">
-            {content.hero_subtitle}
+          <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl whitespace-pre-line">
+            {content.hero_description || content.hero_subtitle}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">

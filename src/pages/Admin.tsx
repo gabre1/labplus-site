@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AdminShowcase } from '@/components/admin/AdminShowcase'
 import { AdminCatalog } from '@/components/admin/AdminCatalog'
+import { AdminContent } from '@/components/admin/AdminContent'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 
@@ -17,11 +18,15 @@ export default function Admin() {
       </header>
 
       <main className="max-w-6xl mx-auto p-6 mt-8 bg-white border border-border rounded-xl shadow-sm">
-        <Tabs defaultValue="showcase" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-8">
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 max-w-[600px] mb-8">
+            <TabsTrigger value="content">Conteúdo</TabsTrigger>
             <TabsTrigger value="showcase">Vitrine</TabsTrigger>
             <TabsTrigger value="catalog">Catálogo</TabsTrigger>
           </TabsList>
+          <TabsContent value="content">
+            <AdminContent />
+          </TabsContent>
           <TabsContent value="showcase">
             <AdminShowcase />
           </TabsContent>

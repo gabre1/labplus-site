@@ -40,10 +40,9 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Telefones</h3>
-                  <p className="text-muted-foreground">
-                    Comercial: (82) 3000-0000
-                    <br />
-                    WhatsApp: (82) 99999-9999
+                  <p className="text-muted-foreground whitespace-pre-line">
+                    {content.contact_phone?.replace(' / ', '\n') ||
+                      '(82) 3000-0000\n(82) 99999-9999'}
                   </p>
                 </div>
               </div>
@@ -54,7 +53,9 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">E-mail</h3>
-                  <p className="text-muted-foreground">contato@labplus.com.br</p>
+                  <p className="text-muted-foreground">
+                    {content.contact_email || 'contato@labplus.com.br'}
+                  </p>
                 </div>
               </div>
 

@@ -29,16 +29,20 @@ export function AboutSection() {
               {content.about_title_1}{' '}
               <span className="text-primary">{content.about_title_highlight}</span>
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed">{content.about_text}</p>
+            <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-line">
+              {content.about_text}
+            </p>
 
-            <ul className="space-y-4 mt-8">
-              {content.about_benefits.map((benefit, index) => (
-                <li key={index} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-6 w-6 text-primary shrink-0" />
-                  <span className="font-medium">{benefit}</span>
-                </li>
-              ))}
-            </ul>
+            {content.about_benefits && (
+              <ul className="space-y-4 mt-8">
+                {content.about_benefits.map((benefit: string, index: number) => (
+                  <li key={index} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-6 w-6 text-primary shrink-0" />
+                    <span className="font-medium">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
