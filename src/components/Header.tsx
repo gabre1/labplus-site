@@ -22,11 +22,15 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full glass-header bg-white/80 backdrop-blur-md border-b">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <img
-            src="https://img.usecurling.com/i?q=labplus&color=blue&shape=outline"
-            alt="Labplus Diagnóstica"
-            className="h-10 w-auto"
-          />
+          {content?.logo_url ? (
+            <img src={content.logo_url} alt="Logo" className="h-10 w-auto object-contain" />
+          ) : (
+            <img
+              src="https://img.usecurling.com/i?q=labplus&color=blue&shape=outline"
+              alt="Labplus Diagnóstica"
+              className="h-10 w-auto"
+            />
+          )}
           <span className="font-bold text-2xl tracking-tight hidden sm:block">
             LAB<span className="text-primary">PLUS</span>
           </span>

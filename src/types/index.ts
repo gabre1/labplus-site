@@ -4,6 +4,9 @@ export interface FaqItem {
 }
 
 export interface SiteContent {
+  logo_url?: string
+  footer_info?: string
+
   hero_badge: string
   hero_title_1: string
   hero_title_highlight: string
@@ -58,6 +61,8 @@ export interface CatalogItem {
   pdf_link: string
   payment_conditions: string
   recommendation_tags: string
+  image?: string
+  description?: string
 }
 
 export interface DiagnosticFormData {

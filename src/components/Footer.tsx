@@ -9,17 +9,26 @@ export function Footer() {
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-white">
-            <img
-              src="https://img.usecurling.com/i?q=labplus&color=white&shape=outline"
-              alt="Labplus Diagnóstica"
-              className="h-8 w-auto"
-            />
+            {content?.logo_url ? (
+              <img
+                src={content.logo_url}
+                alt="Logo"
+                className="h-8 w-auto object-contain brightness-0 invert"
+              />
+            ) : (
+              <img
+                src="https://img.usecurling.com/i?q=labplus&color=white&shape=outline"
+                alt="Labplus Diagnóstica"
+                className="h-8 w-auto"
+              />
+            )}
             <span className="font-bold text-xl tracking-tight">
               LAB<span className="text-primary">PLUS</span>
             </span>
           </div>
           <p className="text-sm text-gray-400">
-            Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste.
+            {content?.footer_info ||
+              'Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste.'}
           </p>
           <div className="flex gap-4 pt-2">
             <a href="#" className="hover:text-primary transition-colors">

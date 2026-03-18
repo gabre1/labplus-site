@@ -73,23 +73,30 @@ export default function Diagnostic() {
           Volume: formData.volume,
         },
         MatchedEquipment: {
-          Name: matchedItem.equipment_name,
-          Value: matchedItem.value,
-          Provider: matchedItem.provider,
-          Link: matchedItem.pdf_link,
-          Conditions: matchedItem.payment_conditions,
+          Name: matchedItem?.equipment_name,
+          Value: matchedItem?.value,
+          Provider: matchedItem?.provider,
+          Link: matchedItem?.pdf_link,
+          Conditions: matchedItem?.payment_conditions,
+          Image: matchedItem?.image,
+          Description: matchedItem?.description,
         },
       })
 
       toast({
         title: '🚨 Alerta Interno de Vendas',
-        description: `Lead: ${formData.name} - Match: ${matchedItem.equipment_name}`,
+        description: `Lead: ${formData.name} - Match: ${matchedItem?.equipment_name}`,
         duration: 8000,
       })
 
       setStep(5)
     } catch (error) {
       console.error(error)
+      toast({
+        title: 'Erro ao processar o diagnóstico',
+        description: 'Não foi possível encontrar uma recomendação no momento.',
+        variant: 'destructive',
+      })
     } finally {
       setIsLoading(false)
     }

@@ -25775,6 +25775,8 @@ SheetDescription.displayName = Description.displayName;
 //#endregion
 //#region src/lib/api.ts
 var mockSiteContent = {
+	logo_url: "https://img.usecurling.com/i?q=labplus&color=blue&shape=outline",
+	footer_info: "Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste.",
 	hero_badge: "Líder em Distribuição Laboratorial",
 	hero_title_1: "Excelência em Diagnóstico e ",
 	hero_title_highlight: "Suporte Laboratorial",
@@ -25784,7 +25786,7 @@ var mockSiteContent = {
 	hero_btn_support: "Assistência Técnica",
 	about_title_1: "Infraestrutura Robusta para o seu ",
 	about_title_highlight: "Crescimento",
-	about_text: "A Labplus Diagnóstica nasceu com o propósito de elevar o padrão do suporte laboratorial. Localizados estrategicamente em Maceió, Alagoas, garantimos agilidade logística incomparável para suprir as necessidades da sua rotina, seja com reagentes, insumos ou manutenção de equipamentos.",
+	about_text: "A Labplus Diagnóstica nasceu com o propósito de elevar o padrão do suporte laboratorial. Localizados estrategicamente em Maceió, Alagoas, garantimos agilidade logística incomparável.",
 	about_benefits: [
 		"Agilidade Logística em todo o Nordeste",
 		"Estoque estratégico e peças de reposição",
@@ -25794,40 +25796,35 @@ var mockSiteContent = {
 	showcase_badge: "Estoque Limitado",
 	showcase_title_1: "Vitrine de ",
 	showcase_title_highlight: "Oportunidades",
-	showcase_subtitle: "Equipamentos de mostruário, seminovos revisados e insumos com validade curta. Condições exclusivas para fechamento rápido.",
+	showcase_subtitle: "Equipamentos de mostruário, seminovos revisados e insumos com validade curta.",
 	faq_title_1: "Perguntas ",
 	faq_title_highlight: "Frequentes",
 	faq_subtitle: "Tire suas principais dúvidas sobre nossos processos e serviços.",
-	faq_items: [
-		{
-			question: "Qual o prazo médio de entrega?",
-			answer: "Para clientes localizados em Maceió e região metropolitana, realizamos entregas em até 24 horas úteis. Para demais localidades do Nordeste, o prazo varia de 2 a 5 dias úteis dependendo da transportadora parceira."
-		},
-		{
-			question: "Vocês realizam a instalação e treinamento?",
-			answer: "Sim! Todos os nossos equipamentos incluem serviço completo de entrega técnica, instalação no local e treinamento operacional para a sua equipe, garantindo que o laboratório extraia o máximo da tecnologia."
-		},
-		{
-			question: "Como acionar a assistência técnica?",
-			answer: "Você pode acionar nosso suporte técnico diretamente pelo WhatsApp oficial ou por e-mail. Temos uma equipe de plantão em horário comercial para diagnósticos remotos e agendamento de visitas presenciais."
-		},
-		{
-			question: "Quais as formas de pagamento disponíveis?",
-			answer: "Trabalhamos com condições flexíveis para B2B, incluindo faturamento via boleto bancário (sujeito a análise de crédito), cartão de crédito em até 12x, financiamento bancário e modalidades de comodato para alto volume."
-		}
-	],
+	faq_items: [{
+		question: "Qual o prazo médio de entrega?",
+		answer: "Para Maceió e região, entregas em 24h. Restante do Nordeste de 2 a 5 dias úteis."
+	}, {
+		question: "Vocês realizam a instalação e treinamento?",
+		answer: "Sim! Todos os equipamentos incluem entrega técnica, instalação e treinamento."
+	}],
 	contact_title_1: "Localização e ",
 	contact_title_highlight: "Contato",
-	contact_subtitle: "Nossa matriz está localizada estrategicamente para atender sua demanda com máxima velocidade.",
+	contact_subtitle: "Nossa matriz está localizada estrategicamente para atender sua demanda.",
 	diagnostic_title_1: "Diagnóstico ",
 	diagnostic_title_highlight: "Consultivo",
-	diagnostic_success_msg: "Informações recebidas com sucesso! Em breve, um especialista entrará em contato com a melhor solução.",
+	diagnostic_success_msg: "Informações recebidas com sucesso! Em breve entraremos em contato.",
 	nav_about: "Sobre Nós",
 	nav_showcase: "Oportunidades",
 	nav_faq: "FAQ",
 	nav_contact: "Contato",
 	nav_btn_diagnostic: "Solicitar Diagnóstico"
 };
+function getPbImageUrl(item, fieldName) {
+	const fileName = item[fieldName];
+	if (!fileName) return void 0;
+	if (fileName.startsWith("http") || fileName.startsWith("data:")) return fileName;
+	return `/api/files/${item.collectionId}/${item.id}/${fileName}`;
+}
 async function fetchSiteContent() {
 	try {
 		const response = await fetch("/api/collections/SiteContent/records");
@@ -25835,16 +25832,9 @@ async function fetchSiteContent() {
 			const data = await response.json();
 			if (data.items && data.items.length > 0) {
 				const dbData = data.items[0];
-				if (typeof dbData.about_benefits === "string") try {
-					dbData.about_benefits = JSON.parse(dbData.about_benefits);
-				} catch (e) {
-					console.warn("Failed to parse about_benefits", e);
-				}
-				if (typeof dbData.faq_items === "string") try {
-					dbData.faq_items = JSON.parse(dbData.faq_items);
-				} catch (e) {
-					console.warn("Failed to parse faq_items", e);
-				}
+				if (typeof dbData.about_benefits === "string") dbData.about_benefits = JSON.parse(dbData.about_benefits);
+				if (typeof dbData.faq_items === "string") dbData.faq_items = JSON.parse(dbData.faq_items);
+				if (dbData.logo_url) dbData.logo_url = getPbImageUrl(dbData, "logo_url") || dbData.logo_url;
 				return {
 					...mockSiteContent,
 					...dbData
@@ -25856,92 +25846,54 @@ async function fetchSiteContent() {
 	}
 	return new Promise((resolve) => setTimeout(() => resolve(mockSiteContent), 300));
 }
-var mockShowcaseItems = [
-	{
-		id: "1",
-		title: "Analisador Bioquímico BS-200",
-		description: "Equipamento semi-novo, totalmente revisado com garantia de 6 meses. Ideal para laboratórios de pequeno porte.",
-		image: "https://img.usecurling.com/p/400/300?q=laboratory%20machine",
-		badge: "Última Unidade"
-	},
-	{
-		id: "2",
-		title: "Reagentes Hematologia (Lote Curto)",
-		description: "Kit completo de reagentes para linha Sysmex com vencimento em 45 dias. Desconto especial.",
-		image: "https://img.usecurling.com/p/400/300?q=medical%20vials",
-		badge: "Validade Curta - 40% OFF"
-	},
-	{
-		id: "3",
-		title: "Centrífuga de Bancada 4000 RPM",
-		description: "Mostruário. Perfeito estado de conservação. Excelente custo-benefício para rotinas básicas.",
-		image: "https://img.usecurling.com/p/400/300?q=centrifuge",
-		badge: "Mostruário"
-	},
-	{
-		id: "4",
-		title: "Microscópio Binocular LED",
-		description: "Óptica infinita, iluminação LED de alta durabilidade. Pronta entrega em nosso CD em Maceió.",
-		image: "https://img.usecurling.com/p/400/300?q=microscope",
-		badge: "Pronta Entrega"
-	}
-];
+var mockShowcaseItems = [{
+	id: "1",
+	title: "Analisador Bioquímico BS-200",
+	description: "Equipamento semi-novo, totalmente revisado com garantia de 6 meses.",
+	image: "https://img.usecurling.com/p/400/300?q=laboratory%20machine",
+	badge: "Última Unidade"
+}, {
+	id: "2",
+	title: "Reagentes Hematologia",
+	description: "Kit completo de reagentes para linha Sysmex com vencimento em 45 dias.",
+	image: "https://img.usecurling.com/p/400/300?q=medical%20vials",
+	badge: "Validade Curta - 40% OFF"
+}];
 async function fetchShowcaseItems() {
 	try {
 		const response = await fetch("/api/collections/ShowcaseItems/records");
 		if (response.ok) {
 			const data = await response.json();
-			if (data.items && data.items.length > 0) return data.items;
+			if (data.items && data.items.length > 0) return data.items.map((item) => ({
+				...item,
+				image: getPbImageUrl(item, "image") || item.image
+			}));
 		}
 	} catch (error) {
 		console.warn("Backend fetch failed for ShowcaseItems, using mock data.", error);
 	}
 	return new Promise((resolve) => setTimeout(() => resolve(mockShowcaseItems), 300));
 }
-var mockCatalogItems = [
-	{
-		id: "c1",
-		equipment_name: "Mindray BC-3000 Plus (Hematologia 3 Partes)",
-		value: "Sob Consulta",
-		provider: "Mindray",
-		pdf_link: "#",
-		payment_conditions: "Até 24x sem juros",
-		recommendation_tags: "Humano, Hematologia, Até 50, 51 a 200"
-	},
-	{
-		id: "c2",
-		equipment_name: "Sysmex XN-L (Hematologia 5 Partes)",
-		value: "Sob Consulta",
-		provider: "Sysmex",
-		pdf_link: "#",
-		payment_conditions: "Leasing ou Financiamento",
-		recommendation_tags: "Humano, Hematologia, 201 a 300, Acima de 300"
-	},
-	{
-		id: "c3",
-		equipment_name: "Bioclin 200 (Bioquímica Automatizada)",
-		value: "Sob Consulta",
-		provider: "Bioclin",
-		pdf_link: "#",
-		payment_conditions: "Até 12x",
-		recommendation_tags: "Humano, Bioquímica, 51 a 200, 201 a 300"
-	},
-	{
-		id: "c4",
-		equipment_name: "Mindray BC-2800 Vet (Hematologia Veterinária)",
-		value: "Sob Consulta",
-		provider: "Mindray",
-		pdf_link: "#",
-		payment_conditions: "Até 18x",
-		recommendation_tags: "Veterinário, Hematologia, Até 50, 51 a 200, 201 a 300, Acima de 300"
-	}
-];
+var mockCatalogItems = [{
+	id: "c1",
+	equipment_name: "Mindray BC-3000 Plus",
+	value: "Sob Consulta",
+	provider: "Mindray",
+	pdf_link: "#",
+	payment_conditions: "Até 24x sem juros",
+	recommendation_tags: "Humano, Hematologia, Até 50, 51 a 200",
+	image: "https://img.usecurling.com/p/400/300?q=medical%20machine",
+	description: "Analisador hematológico automatizado ideal para laboratórios de pequeno porte."
+}];
 async function fetchCatalogItems() {
 	try {
 		const response = await fetch("/api/collections/CatalogItems/records");
 		if (response.ok) {
 			const data = await response.json();
-			if (data.items && data.items.length > 0) return data.items;
+			if (data.items && data.items.length > 0) return data.items.map((item) => ({
+				...item,
+				image: getPbImageUrl(item, "image") || item.image
+			}));
 		}
 	} catch (error) {
 		console.warn("Backend fetch failed for CatalogItems, using mock data.", error);
@@ -26008,21 +25960,27 @@ function Header$1() {
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Link, {
 					"data-uid": "src/components/Header.tsx:24:9",
-					"data-prohibitions": "[]",
+					"data-prohibitions": "[editContent]",
 					to: "/",
 					className: "flex items-center gap-2",
-					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-						"data-uid": "src/components/Header.tsx:25:11",
+					children: [content?.logo_url ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+						"data-uid": "src/components/Header.tsx:26:13",
+						"data-prohibitions": "[editContent]",
+						src: content.logo_url,
+						alt: "Logo",
+						className: "h-10 w-auto object-contain"
+					}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+						"data-uid": "src/components/Header.tsx:28:13",
 						"data-prohibitions": "[editContent]",
 						src: "https://img.usecurling.com/i?q=labplus&color=blue&shape=outline",
 						alt: "Labplus Diagnóstica",
 						className: "h-10 w-auto"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						"data-uid": "src/components/Header.tsx:30:11",
+						"data-uid": "src/components/Header.tsx:34:11",
 						"data-prohibitions": "[]",
 						className: "font-bold text-2xl tracking-tight hidden sm:block",
 						children: ["LAB", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-							"data-uid": "src/components/Header.tsx:31:16",
+							"data-uid": "src/components/Header.tsx:35:16",
 							"data-prohibitions": "[]",
 							className: "text-primary",
 							children: "PLUS"
@@ -26030,27 +25988,27 @@ function Header$1() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-					"data-uid": "src/components/Header.tsx:36:9",
+					"data-uid": "src/components/Header.tsx:40:9",
 					"data-prohibitions": "[editContent]",
 					className: "hidden md:flex items-center gap-8",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						"data-uid": "src/components/Header.tsx:37:11",
+						"data-uid": "src/components/Header.tsx:41:11",
 						"data-prohibitions": "[editContent]",
 						className: "flex gap-6 text-sm font-medium text-muted-foreground",
 						children: navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-							"data-uid": "src/components/Header.tsx:39:15",
+							"data-uid": "src/components/Header.tsx:43:15",
 							"data-prohibitions": "[editContent]",
 							href: link.href,
 							className: "hover:text-primary transition-colors",
 							children: link.name
 						}, link.name))
 					}), content && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-						"data-uid": "src/components/Header.tsx:45:13",
+						"data-uid": "src/components/Header.tsx:49:13",
 						"data-prohibitions": "[editContent]",
 						asChild: true,
 						className: "rounded-full px-6",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-							"data-uid": "src/components/Header.tsx:46:15",
+							"data-uid": "src/components/Header.tsx:50:15",
 							"data-prohibitions": "[editContent]",
 							to: "/diagnostico",
 							children: content.nav_btn_diagnostic || "Solicitar Diagnóstico"
@@ -26058,67 +26016,67 @@ function Header$1() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-					"data-uid": "src/components/Header.tsx:52:9",
+					"data-uid": "src/components/Header.tsx:56:9",
 					"data-prohibitions": "[editContent]",
 					className: "md:hidden",
 					children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, {
-						"data-uid": "src/components/Header.tsx:53:11",
+						"data-uid": "src/components/Header.tsx:57:11",
 						"data-prohibitions": "[editContent]",
 						open: isOpen,
 						onOpenChange: setIsOpen,
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetTrigger, {
-							"data-uid": "src/components/Header.tsx:54:13",
+							"data-uid": "src/components/Header.tsx:58:13",
 							"data-prohibitions": "[]",
 							asChild: true,
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Button, {
-								"data-uid": "src/components/Header.tsx:55:15",
+								"data-uid": "src/components/Header.tsx:59:15",
 								"data-prohibitions": "[]",
 								variant: "ghost",
 								size: "icon",
 								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Menu, {
-									"data-uid": "src/components/Header.tsx:56:17",
+									"data-uid": "src/components/Header.tsx:60:17",
 									"data-prohibitions": "[editContent]",
 									className: "h-6 w-6"
 								}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/Header.tsx:57:17",
+									"data-uid": "src/components/Header.tsx:61:17",
 									"data-prohibitions": "[]",
 									className: "sr-only",
 									children: "Toggle menu"
 								})]
 							})
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(SheetContent, {
-							"data-uid": "src/components/Header.tsx:60:13",
+							"data-uid": "src/components/Header.tsx:64:13",
 							"data-prohibitions": "[editContent]",
 							side: "right",
 							className: "w-[300px] sm:w-[400px]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SheetTitle, {
-								"data-uid": "src/components/Header.tsx:61:15",
+								"data-uid": "src/components/Header.tsx:65:15",
 								"data-prohibitions": "[]",
 								className: "text-left mb-6",
 								children: "Menu de Navegação"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("nav", {
-								"data-uid": "src/components/Header.tsx:62:15",
+								"data-uid": "src/components/Header.tsx:66:15",
 								"data-prohibitions": "[editContent]",
 								className: "flex flex-col gap-4",
 								children: [navLinks.map((link) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Header.tsx:64:19",
+									"data-uid": "src/components/Header.tsx:68:19",
 									"data-prohibitions": "[editContent]",
 									href: link.href,
 									onClick: () => setIsOpen(false),
 									className: "block px-2 py-1 text-lg font-medium hover:text-primary",
 									children: link.name
 								}, link.name)), content && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									"data-uid": "src/components/Header.tsx:74:19",
+									"data-uid": "src/components/Header.tsx:78:19",
 									"data-prohibitions": "[editContent]",
 									className: "mt-4",
 									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-										"data-uid": "src/components/Header.tsx:75:21",
+										"data-uid": "src/components/Header.tsx:79:21",
 										"data-prohibitions": "[editContent]",
 										asChild: true,
 										className: "w-full rounded-full",
 										onClick: () => setIsOpen(false),
 										children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Link, {
-											"data-uid": "src/components/Header.tsx:80:23",
+											"data-uid": "src/components/Header.tsx:84:23",
 											"data-prohibitions": "[editContent]",
 											to: "/diagnostico",
 											children: content.nav_btn_diagnostic || "Solicitar Diagnóstico"
@@ -26148,25 +26106,31 @@ function Footer() {
 			children: [
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 					"data-uid": "src/components/Footer.tsx:10:9",
-					"data-prohibitions": "[]",
+					"data-prohibitions": "[editContent]",
 					className: "space-y-4",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							"data-uid": "src/components/Footer.tsx:11:11",
-							"data-prohibitions": "[]",
+							"data-prohibitions": "[editContent]",
 							className: "flex items-center gap-2 text-white",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-								"data-uid": "src/components/Footer.tsx:12:13",
+							children: [content?.logo_url ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+								"data-uid": "src/components/Footer.tsx:13:15",
+								"data-prohibitions": "[editContent]",
+								src: content.logo_url,
+								alt: "Logo",
+								className: "h-8 w-auto object-contain brightness-0 invert"
+							}) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
+								"data-uid": "src/components/Footer.tsx:19:15",
 								"data-prohibitions": "[editContent]",
 								src: "https://img.usecurling.com/i?q=labplus&color=white&shape=outline",
 								alt: "Labplus Diagnóstica",
 								className: "h-8 w-auto"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/Footer.tsx:17:13",
+								"data-uid": "src/components/Footer.tsx:25:13",
 								"data-prohibitions": "[]",
 								className: "font-bold text-xl tracking-tight",
 								children: ["LAB", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-									"data-uid": "src/components/Footer.tsx:18:18",
+									"data-uid": "src/components/Footer.tsx:26:18",
 									"data-prohibitions": "[]",
 									className: "text-primary",
 									children: "PLUS"
@@ -26174,32 +26138,32 @@ function Footer() {
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-							"data-uid": "src/components/Footer.tsx:21:11",
-							"data-prohibitions": "[]",
+							"data-uid": "src/components/Footer.tsx:29:11",
+							"data-prohibitions": "[editContent]",
 							className: "text-sm text-gray-400",
-							children: "Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste."
+							children: content?.footer_info || "Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste."
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/Footer.tsx:24:11",
+							"data-uid": "src/components/Footer.tsx:33:11",
 							"data-prohibitions": "[]",
 							className: "flex gap-4 pt-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-								"data-uid": "src/components/Footer.tsx:25:13",
+								"data-uid": "src/components/Footer.tsx:34:13",
 								"data-prohibitions": "[]",
 								href: "#",
 								className: "hover:text-primary transition-colors",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Instagram, {
-									"data-uid": "src/components/Footer.tsx:26:15",
+									"data-uid": "src/components/Footer.tsx:35:15",
 									"data-prohibitions": "[editContent]",
 									className: "h-5 w-5"
 								})
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-								"data-uid": "src/components/Footer.tsx:28:13",
+								"data-uid": "src/components/Footer.tsx:37:13",
 								"data-prohibitions": "[]",
 								href: "#",
 								className: "hover:text-primary transition-colors",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Linkedin, {
-									"data-uid": "src/components/Footer.tsx:29:15",
+									"data-uid": "src/components/Footer.tsx:38:15",
 									"data-prohibitions": "[editContent]",
 									className: "h-5 w-5"
 								})
@@ -26208,23 +26172,23 @@ function Footer() {
 					]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/Footer.tsx:34:9",
+					"data-uid": "src/components/Footer.tsx:43:9",
 					"data-prohibitions": "[editContent]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						"data-uid": "src/components/Footer.tsx:35:11",
+						"data-uid": "src/components/Footer.tsx:44:11",
 						"data-prohibitions": "[]",
 						className: "text-white font-semibold mb-4",
 						children: "Links Rápidos"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-						"data-uid": "src/components/Footer.tsx:36:11",
+						"data-uid": "src/components/Footer.tsx:45:11",
 						"data-prohibitions": "[editContent]",
 						className: "space-y-2 text-sm",
 						children: [
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:37:13",
+								"data-uid": "src/components/Footer.tsx:46:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:38:15",
+									"data-uid": "src/components/Footer.tsx:47:15",
 									"data-prohibitions": "[editContent]",
 									href: "/#sobre",
 									className: "hover:text-primary transition-colors",
@@ -26232,10 +26196,10 @@ function Footer() {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:42:13",
+								"data-uid": "src/components/Footer.tsx:51:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:43:15",
+									"data-uid": "src/components/Footer.tsx:52:15",
 									"data-prohibitions": "[editContent]",
 									href: "/#oportunidades",
 									className: "hover:text-primary transition-colors",
@@ -26243,10 +26207,10 @@ function Footer() {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:47:13",
+								"data-uid": "src/components/Footer.tsx:56:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:48:15",
+									"data-uid": "src/components/Footer.tsx:57:15",
 									"data-prohibitions": "[editContent]",
 									href: "/diagnostico",
 									className: "hover:text-primary transition-colors",
@@ -26254,10 +26218,10 @@ function Footer() {
 								})
 							}),
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("li", {
-								"data-uid": "src/components/Footer.tsx:52:13",
+								"data-uid": "src/components/Footer.tsx:61:13",
 								"data-prohibitions": "[editContent]",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
-									"data-uid": "src/components/Footer.tsx:53:15",
+									"data-uid": "src/components/Footer.tsx:62:15",
 									"data-prohibitions": "[editContent]",
 									href: "/#faq",
 									className: "hover:text-primary transition-colors",
@@ -26268,47 +26232,47 @@ function Footer() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/Footer.tsx:60:9",
+					"data-uid": "src/components/Footer.tsx:69:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						"data-uid": "src/components/Footer.tsx:61:11",
+						"data-uid": "src/components/Footer.tsx:70:11",
 						"data-prohibitions": "[]",
 						className: "text-white font-semibold mb-4",
 						children: "Contato"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("ul", {
-						"data-uid": "src/components/Footer.tsx:62:11",
+						"data-uid": "src/components/Footer.tsx:71:11",
 						"data-prohibitions": "[]",
 						className: "space-y-3 text-sm",
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-							"data-uid": "src/components/Footer.tsx:63:13",
+							"data-uid": "src/components/Footer.tsx:72:13",
 							"data-prohibitions": "[]",
 							className: "flex items-start gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Phone, {
-								"data-uid": "src/components/Footer.tsx:64:15",
+								"data-uid": "src/components/Footer.tsx:73:15",
 								"data-prohibitions": "[editContent]",
 								className: "h-4 w-4 mt-0.5 text-primary shrink-0"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/Footer.tsx:65:15",
+								"data-uid": "src/components/Footer.tsx:74:15",
 								"data-prohibitions": "[]",
 								children: [
 									"(82) 3000-0000",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/Footer.tsx:67:17",
+										"data-uid": "src/components/Footer.tsx:76:17",
 										"data-prohibitions": "[editContent]"
 									}),
 									"(82) 99999-9999 (WhatsApp)"
 								]
 							})]
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-							"data-uid": "src/components/Footer.tsx:71:13",
+							"data-uid": "src/components/Footer.tsx:80:13",
 							"data-prohibitions": "[]",
 							className: "flex items-center gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, {
-								"data-uid": "src/components/Footer.tsx:72:15",
+								"data-uid": "src/components/Footer.tsx:81:15",
 								"data-prohibitions": "[editContent]",
 								className: "h-4 w-4 text-primary shrink-0"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/Footer.tsx:73:15",
+								"data-uid": "src/components/Footer.tsx:82:15",
 								"data-prohibitions": "[]",
 								children: "contato@labplus.com.br"
 							})]
@@ -26316,37 +26280,37 @@ function Footer() {
 					})]
 				}),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/components/Footer.tsx:78:9",
+					"data-uid": "src/components/Footer.tsx:87:9",
 					"data-prohibitions": "[]",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-						"data-uid": "src/components/Footer.tsx:79:11",
+						"data-uid": "src/components/Footer.tsx:88:11",
 						"data-prohibitions": "[]",
 						className: "text-white font-semibold mb-4",
 						children: "Localização"
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("ul", {
-						"data-uid": "src/components/Footer.tsx:80:11",
+						"data-uid": "src/components/Footer.tsx:89:11",
 						"data-prohibitions": "[]",
 						className: "space-y-2 text-sm",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("li", {
-							"data-uid": "src/components/Footer.tsx:81:13",
+							"data-uid": "src/components/Footer.tsx:90:13",
 							"data-prohibitions": "[]",
 							className: "flex items-start gap-2",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MapPin, {
-								"data-uid": "src/components/Footer.tsx:82:15",
+								"data-uid": "src/components/Footer.tsx:91:15",
 								"data-prohibitions": "[editContent]",
 								className: "h-4 w-4 mt-0.5 text-primary shrink-0"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-								"data-uid": "src/components/Footer.tsx:83:15",
+								"data-uid": "src/components/Footer.tsx:92:15",
 								"data-prohibitions": "[]",
 								children: [
 									"Av. Menino Marcelo, 1234",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/Footer.tsx:85:17",
+										"data-uid": "src/components/Footer.tsx:94:17",
 										"data-prohibitions": "[editContent]"
 									}),
 									"Serraria, Maceió - AL",
 									/* @__PURE__ */ (0, import_jsx_runtime.jsx)("br", {
-										"data-uid": "src/components/Footer.tsx:87:17",
+										"data-uid": "src/components/Footer.tsx:96:17",
 										"data-prohibitions": "[editContent]"
 									}),
 									"CEP: 57000-000"
@@ -26357,11 +26321,11 @@ function Footer() {
 				})
 			]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-			"data-uid": "src/components/Footer.tsx:95:7",
+			"data-uid": "src/components/Footer.tsx:104:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4 mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500",
 			children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-				"data-uid": "src/components/Footer.tsx:96:9",
+				"data-uid": "src/components/Footer.tsx:105:9",
 				"data-prohibitions": "[editContent]",
 				children: [
 					"© ",
@@ -26734,47 +26698,67 @@ function Badge({ className, variant, ...props }) {
 	});
 }
 //#endregion
+//#region src/components/ui/skeleton.tsx
+function Skeleton({ className, ...props }) {
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+		"data-uid": "src/components/ui/skeleton.tsx:5:10",
+		"data-prohibitions": "[editContent]",
+		className: cn$1("animate-pulse rounded-md bg-muted", className),
+		...props
+	});
+}
+//#endregion
 //#region src/components/sections/ShowcaseSection.tsx
 function ShowcaseSection() {
 	const { content } = useCms();
 	const [items, setItems] = (0, import_react.useState)([]);
+	const [isLoading, setIsLoading] = (0, import_react.useState)(true);
 	(0, import_react.useEffect)(() => {
-		fetchShowcaseItems().then(setItems);
+		let isMounted = true;
+		fetchShowcaseItems().then((data) => {
+			if (isMounted) {
+				setItems(data);
+				setIsLoading(false);
+			}
+		});
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 	if (!content) return null;
 	const getWhatsAppLink = (itemName) => {
 		return `https://wa.me/5582999999999?text=${encodeURIComponent(`Olá! Tenho interesse no item "${itemName}" da Vitrine de Oportunidades.`)}`;
 	};
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("section", {
-		"data-uid": "src/components/sections/ShowcaseSection.tsx:28:5",
+		"data-uid": "src/components/sections/ShowcaseSection.tsx:39:5",
 		"data-prohibitions": "[editContent]",
 		id: "oportunidades",
 		className: "py-24 bg-slate-50",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/components/sections/ShowcaseSection.tsx:29:7",
+			"data-uid": "src/components/sections/ShowcaseSection.tsx:40:7",
 			"data-prohibitions": "[editContent]",
 			className: "container mx-auto px-4",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/components/sections/ShowcaseSection.tsx:30:9",
+				"data-uid": "src/components/sections/ShowcaseSection.tsx:41:9",
 				"data-prohibitions": "[editContent]",
 				className: "text-center max-w-2xl mx-auto mb-16",
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-						"data-uid": "src/components/sections/ShowcaseSection.tsx:31:11",
+						"data-uid": "src/components/sections/ShowcaseSection.tsx:42:11",
 						"data-prohibitions": "[editContent]",
 						variant: "outline",
 						className: "mb-4 border-primary text-primary",
 						children: content.showcase_badge
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
-						"data-uid": "src/components/sections/ShowcaseSection.tsx:34:11",
+						"data-uid": "src/components/sections/ShowcaseSection.tsx:45:11",
 						"data-prohibitions": "[editContent]",
 						className: "text-3xl md:text-4xl font-bold tracking-tight mb-4",
 						children: [
 							content.showcase_title_1,
 							" ",
 							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-								"data-uid": "src/components/sections/ShowcaseSection.tsx:36:13",
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:47:13",
 								"data-prohibitions": "[editContent]",
 								className: "text-primary",
 								children: content.showcase_title_highlight
@@ -26782,37 +26766,82 @@ function ShowcaseSection() {
 						]
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-						"data-uid": "src/components/sections/ShowcaseSection.tsx:38:11",
+						"data-uid": "src/components/sections/ShowcaseSection.tsx:49:11",
 						"data-prohibitions": "[editContent]",
 						className: "text-muted-foreground text-lg",
 						children: content.showcase_subtitle
 					})
 				]
 			}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-				"data-uid": "src/components/sections/ShowcaseSection.tsx:41:9",
+				"data-uid": "src/components/sections/ShowcaseSection.tsx:52:9",
 				"data-prohibitions": "[editContent]",
 				className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6",
-				children: items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-					"data-uid": "src/components/sections/ShowcaseSection.tsx:43:13",
+				children: isLoading ? Array.from({ length: 4 }).map((_, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/components/sections/ShowcaseSection.tsx:55:17",
+					"data-prohibitions": "[]",
+					className: "flex flex-col overflow-hidden border-border/50",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:56:19",
+							"data-prohibitions": "[editContent]",
+							className: "h-48 w-full rounded-none"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:57:19",
+							"data-prohibitions": "[]",
+							className: "pb-3 pt-5",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:58:21",
+								"data-prohibitions": "[editContent]",
+								className: "h-6 w-3/4"
+							})
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(CardContent, {
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:60:19",
+							"data-prohibitions": "[]",
+							className: "flex-1 space-y-2",
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:61:21",
+								"data-prohibitions": "[editContent]",
+								className: "h-4 w-full"
+							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:62:21",
+								"data-prohibitions": "[editContent]",
+								className: "h-4 w-5/6"
+							})]
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:64:19",
+							"data-prohibitions": "[]",
+							className: "pt-0",
+							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Skeleton, {
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:65:21",
+								"data-prohibitions": "[editContent]",
+								className: "h-10 w-full"
+							})
+						})
+					]
+				}, i)) : items.map((item) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
+					"data-uid": "src/components/sections/ShowcaseSection.tsx:70:17",
 					"data-prohibitions": "[editContent]",
 					className: "flex flex-col group hover:shadow-lg transition-all duration-300 border-border/50 overflow-hidden",
 					children: [
 						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-							"data-uid": "src/components/sections/ShowcaseSection.tsx:47:15",
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:74:19",
 							"data-prohibitions": "[editContent]",
 							className: "relative h-48 overflow-hidden",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-								"data-uid": "src/components/sections/ShowcaseSection.tsx:48:17",
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:75:21",
 								"data-prohibitions": "[editContent]",
 								src: item.image,
 								alt: item.title,
 								className: "w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-								"data-uid": "src/components/sections/ShowcaseSection.tsx:53:17",
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:80:21",
 								"data-prohibitions": "[editContent]",
 								className: "absolute top-3 left-3",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Badge, {
-									"data-uid": "src/components/sections/ShowcaseSection.tsx:54:19",
+									"data-uid": "src/components/sections/ShowcaseSection.tsx:81:23",
 									"data-prohibitions": "[editContent]",
 									className: "bg-primary hover:bg-primary/90 shadow-md",
 									children: item.badge
@@ -26820,45 +26849,45 @@ function ShowcaseSection() {
 							})]
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardHeader, {
-							"data-uid": "src/components/sections/ShowcaseSection.tsx:57:15",
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:86:19",
 							"data-prohibitions": "[editContent]",
 							className: "pb-3 pt-5",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
-								"data-uid": "src/components/sections/ShowcaseSection.tsx:58:17",
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:87:21",
 								"data-prohibitions": "[editContent]",
 								className: "font-bold text-lg leading-tight line-clamp-2",
 								children: item.title
 							})
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardContent, {
-							"data-uid": "src/components/sections/ShowcaseSection.tsx:60:15",
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:89:19",
 							"data-prohibitions": "[editContent]",
 							className: "flex-1",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
-								"data-uid": "src/components/sections/ShowcaseSection.tsx:61:17",
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:90:21",
 								"data-prohibitions": "[editContent]",
 								className: "text-sm text-muted-foreground line-clamp-3",
 								children: item.description
 							})
 						}),
 						/* @__PURE__ */ (0, import_jsx_runtime.jsx)(CardFooter, {
-							"data-uid": "src/components/sections/ShowcaseSection.tsx:63:15",
+							"data-uid": "src/components/sections/ShowcaseSection.tsx:92:19",
 							"data-prohibitions": "[]",
 							className: "pt-0",
 							children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Button, {
-								"data-uid": "src/components/sections/ShowcaseSection.tsx:64:17",
+								"data-uid": "src/components/sections/ShowcaseSection.tsx:93:21",
 								"data-prohibitions": "[]",
 								asChild: true,
 								className: "w-full gap-2",
 								variant: "default",
 								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
-									"data-uid": "src/components/sections/ShowcaseSection.tsx:65:19",
+									"data-uid": "src/components/sections/ShowcaseSection.tsx:94:23",
 									"data-prohibitions": "[]",
 									href: getWhatsAppLink(item.title),
 									target: "_blank",
 									rel: "noopener noreferrer",
 									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MessageCircle, {
-										"data-uid": "src/components/sections/ShowcaseSection.tsx:66:21",
+										"data-uid": "src/components/sections/ShowcaseSection.tsx:99:25",
 										"data-prohibitions": "[editContent]",
 										className: "h-4 w-4"
 									}), "Tenho Interesse"]
@@ -29979,21 +30008,28 @@ function Diagnostic() {
 					Volume: formData.volume
 				},
 				MatchedEquipment: {
-					Name: matchedItem.equipment_name,
-					Value: matchedItem.value,
-					Provider: matchedItem.provider,
-					Link: matchedItem.pdf_link,
-					Conditions: matchedItem.payment_conditions
+					Name: matchedItem?.equipment_name,
+					Value: matchedItem?.value,
+					Provider: matchedItem?.provider,
+					Link: matchedItem?.pdf_link,
+					Conditions: matchedItem?.payment_conditions,
+					Image: matchedItem?.image,
+					Description: matchedItem?.description
 				}
 			});
 			toast({
 				title: "🚨 Alerta Interno de Vendas",
-				description: `Lead: ${formData.name} - Match: ${matchedItem.equipment_name}`,
+				description: `Lead: ${formData.name} - Match: ${matchedItem?.equipment_name}`,
 				duration: 8e3
 			});
 			setStep(5);
 		} catch (error) {
 			console.error(error);
+			toast({
+				title: "Erro ao processar o diagnóstico",
+				description: "Não foi possível encontrar uma recomendação no momento.",
+				variant: "destructive"
+			});
 		} finally {
 			setIsLoading(false);
 		}
@@ -30001,37 +30037,37 @@ function Diagnostic() {
 	if (!content) return null;
 	const progress = step / TOTAL_STEPS * 100;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		"data-uid": "src/pages/Diagnostic.tsx:103:5",
+		"data-uid": "src/pages/Diagnostic.tsx:110:5",
 		"data-prohibitions": "[editContent]",
 		className: "min-h-[calc(100vh-4rem)] bg-slate-50 py-12 px-4 flex flex-col items-center",
 		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-			"data-uid": "src/pages/Diagnostic.tsx:104:7",
+			"data-uid": "src/pages/Diagnostic.tsx:111:7",
 			"data-prohibitions": "[editContent]",
 			className: "w-full max-w-3xl mb-8",
 			children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h1", {
-				"data-uid": "src/pages/Diagnostic.tsx:105:9",
+				"data-uid": "src/pages/Diagnostic.tsx:112:9",
 				"data-prohibitions": "[editContent]",
 				className: "text-3xl font-bold text-center mb-6 text-foreground",
 				children: [
 					content.diagnostic_title_1,
 					" ",
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
-						"data-uid": "src/pages/Diagnostic.tsx:107:11",
+						"data-uid": "src/pages/Diagnostic.tsx:114:11",
 						"data-prohibitions": "[editContent]",
 						className: "text-primary",
 						children: content.diagnostic_title_highlight
 					})
 				]
 			}), step <= TOTAL_STEPS && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-				"data-uid": "src/pages/Diagnostic.tsx:110:11",
+				"data-uid": "src/pages/Diagnostic.tsx:117:11",
 				"data-prohibitions": "[editContent]",
 				className: "space-y-2",
 				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-					"data-uid": "src/pages/Diagnostic.tsx:111:13",
+					"data-uid": "src/pages/Diagnostic.tsx:118:13",
 					"data-prohibitions": "[editContent]",
 					className: "flex justify-between text-sm text-muted-foreground font-medium px-1",
 					children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						"data-uid": "src/pages/Diagnostic.tsx:112:15",
+						"data-uid": "src/pages/Diagnostic.tsx:119:15",
 						"data-prohibitions": "[editContent]",
 						children: [
 							"Passo ",
@@ -30040,31 +30076,31 @@ function Diagnostic() {
 							TOTAL_STEPS
 						]
 					}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", {
-						"data-uid": "src/pages/Diagnostic.tsx:115:15",
+						"data-uid": "src/pages/Diagnostic.tsx:122:15",
 						"data-prohibitions": "[editContent]",
 						children: [Math.round(progress), "% Concluído"]
 					})]
 				}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Progress, {
-					"data-uid": "src/pages/Diagnostic.tsx:117:13",
+					"data-uid": "src/pages/Diagnostic.tsx:124:13",
 					"data-prohibitions": "[editContent]",
 					value: progress,
 					className: "h-2"
 				})]
 			})]
 		}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, {
-			"data-uid": "src/pages/Diagnostic.tsx:122:7",
+			"data-uid": "src/pages/Diagnostic.tsx:129:7",
 			"data-prohibitions": "[editContent]",
 			className: "w-full max-w-3xl p-6 md:p-10 shadow-lg border-border bg-white",
 			children: [
 				step === 1 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Step1Personal, {
-					"data-uid": "src/pages/Diagnostic.tsx:124:11",
+					"data-uid": "src/pages/Diagnostic.tsx:131:11",
 					"data-prohibitions": "[editContent]",
 					data: formData,
 					updateData: updateFormData,
 					onNext: nextStep
 				}),
 				step === 2 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Step2Segment, {
-					"data-uid": "src/pages/Diagnostic.tsx:127:11",
+					"data-uid": "src/pages/Diagnostic.tsx:134:11",
 					"data-prohibitions": "[editContent]",
 					data: formData,
 					updateData: updateFormData,
@@ -30072,7 +30108,7 @@ function Diagnostic() {
 					onPrev: prevStep
 				}),
 				step === 3 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Step3Type, {
-					"data-uid": "src/pages/Diagnostic.tsx:135:11",
+					"data-uid": "src/pages/Diagnostic.tsx:142:11",
 					"data-prohibitions": "[editContent]",
 					data: formData,
 					updateData: updateFormData,
@@ -30080,7 +30116,7 @@ function Diagnostic() {
 					onPrev: prevStep
 				}),
 				step === 4 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Step4Volume, {
-					"data-uid": "src/pages/Diagnostic.tsx:143:11",
+					"data-uid": "src/pages/Diagnostic.tsx:150:11",
 					"data-prohibitions": "[editContent]",
 					data: formData,
 					updateData: updateFormData,
@@ -30089,7 +30125,7 @@ function Diagnostic() {
 					isLoading
 				}),
 				step === 5 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StepSuccess, {
-					"data-uid": "src/pages/Diagnostic.tsx:151:24",
+					"data-uid": "src/pages/Diagnostic.tsx:158:24",
 					"data-prohibitions": "[editContent]",
 					match: matchResult
 				})
@@ -30209,4 +30245,4 @@ var App = () => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(BrowserRouter, {
 }));
 //#endregion
 
-//# sourceMappingURL=index-D7J2MH1Y.js.map
+//# sourceMappingURL=index-BmzP2ijM.js.map
