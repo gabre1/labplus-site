@@ -12,7 +12,7 @@ interface Props {
 
 export function StepInterest({ data, updateData, onNext, onPrev }: Props) {
   const options = [
-    { id: 'reagents', title: 'Interesse em Reagentes, testes e outros insumos' },
+    { id: 'reagents', title: 'Reagentes, testes e outros insumos' },
     { id: 'equipment', title: 'Conhecer equipamentos' },
   ]
 

@@ -32,6 +32,8 @@ export default function Diagnostic() {
     reagent_type: '',
     equipment_model: '',
     volume: '',
+    other_reagent_details: '',
+    other_type_details: '',
   })
 
   const updateFormData = (data: Partial<DiagnosticFormData>) => {

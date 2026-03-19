@@ -4,6 +4,14 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight, ArrowLeft } from 'lucide-react'
 import { DiagnosticFormData } from '@/types'
 import { useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 interface Props {
   data: DiagnosticFormData
@@ -15,9 +23,27 @@ interface Props {
 export function StepReagents({ data, updateData, onNext, onPrev }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  const types = [
+    'Hematologia',
+    'Bioquímica',
+    'Imuno/hormônio',
+    'Centrífugas',
+    'Microscópios',
+    'Biologia Molecular',
+    'Outra necessidade',
+  ]
+
   const validateAndNext = () => {
     const newErrors: Record<string, string> = {}
-    if (!data.reagent_type.trim()) newErrors.reagent_type = 'Tipo de reagente é obrigatório'
+    if (!data.reagent_type.trim()) newErrors.reagent_type = 'Tipo de produto é obrigatório'
+
+    if (
+      data.reagent_type === 'Outra necessidade' &&
+      (!data.other_reagent_details || !data.other_reagent_details.trim())
+    ) {
+      newErrors.other_reagent_details = 'Por favor, descreva sua necessidade'
+    }
+
     if (!data.equipment_model.trim())
       newErrors.equipment_model = 'Modelo do equipamento é obrigatório'
 
@@ -32,25 +58,50 @@ export function StepReagents({ data, updateData, onNext, onPrev }: Props) {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold mb-2">Detalhes dos Reagentes</h2>
+        <h2 className="text-2xl font-bold mb-2">Detalhes dos produtos</h2>
         <p className="text-muted-foreground">Conte-nos mais sobre a sua necessidade.</p>
       </div>
 
       <div className="space-y-4 max-w-md mx-auto">
         <div className="space-y-2">
-          <Label htmlFor="reagent_type">Tipo de Reagente</Label>
-          <Input
-            id="reagent_type"
-            placeholder="Ex: Bioquímica, Hematologia..."
-            value={data.reagent_type}
-            onChange={(e) => updateData({ reagent_type: e.target.value })}
-            className={errors.reagent_type ? 'border-destructive' : ''}
-          />
+          <Label htmlFor="reagent_type">Tipo de Produto/Reagente</Label>
+          <Select
+            value={data.reagent_type || undefined}
+            onValueChange={(val) => updateData({ reagent_type: val })}
+          >
+            <SelectTrigger className={errors.reagent_type ? 'border-destructive' : ''}>
+              <SelectValue placeholder="Selecione o tipo" />
+            </SelectTrigger>
+            <SelectContent>
+              {types.map((type) => (
+                <SelectItem key={type} value={type} className="py-2 text-base">
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {errors.reagent_type && <p className="text-sm text-destructive">{errors.reagent_type}</p>}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="equipment_model">Modelo do Equipamento</Label>
+        {data.reagent_type === 'Outra necessidade' && (
+          <div className="space-y-2 animate-fade-in-up pt-1">
+            <Label htmlFor="other_reagent_details">Descreva sua necessidade</Label>
+            <Textarea
+              id="other_reagent_details"
+              placeholder="Digite os detalhes..."
+              maxLength={500}
+              value={data.other_reagent_details || ''}
+              onChange={(e) => updateData({ other_reagent_details: e.target.value })}
+              className={errors.other_reagent_details ? 'border-destructive h-24' : 'h-24'}
+            />
+            {errors.other_reagent_details && (
+              <p className="text-sm text-destructive">{errors.other_reagent_details}</p>
+            )}
+          </div>
+        )}
+
+        <div className="space-y-2 pt-2">
+          <Label htmlFor="equipment_model">Modelo do Equipamento Atual</Label>
           <Input
             id="equipment_model"
             placeholder="Ex: Mindray BS-200"

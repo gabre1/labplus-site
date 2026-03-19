@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { ArrowRight, ArrowLeft } from 'lucide-react'
+import { ArrowRight, ArrowLeft, User, PawPrint } from 'lucide-react'
 import { DiagnosticFormData } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -12,11 +12,12 @@ interface Props {
 
 export function StepSegment({ data, updateData, onNext, onPrev }: Props) {
   const segments = [
-    { id: 'Humano', title: 'Laboratório Humano', desc: 'Análises clínicas humanas' },
+    { id: 'Humano', title: 'Laboratório Humano', desc: 'Análises clínicas humanas', icon: User },
     {
       id: 'Veterinário',
       title: 'Laboratório Veterinário',
       desc: 'Análises para pets e grandes animais',
+      icon: PawPrint,
     },
   ]
 
@@ -39,9 +40,17 @@ export function StepSegment({ data, updateData, onNext, onPrev }: Props) {
                 : 'border-border hover:border-primary/50 hover:bg-slate-50',
             )}
           >
-            <div className="text-center">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div
+                className={cn(
+                  'p-4 rounded-full mb-4',
+                  data.segment === item.id ? 'bg-primary/20' : 'bg-slate-100',
+                )}
+              >
+                <item.icon className="h-8 w-8" />
+              </div>
               <h3 className="font-bold text-lg text-foreground">{item.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{item.desc}</p>
+              <p className="text-sm text-muted-foreground mt-2">{item.desc}</p>
             </div>
           </button>
         ))}

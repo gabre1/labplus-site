@@ -2,6 +2,7 @@ import { HeroSection } from '@/components/sections/HeroSection'
 import { AboutSection } from '@/components/sections/AboutSection'
 import { ShowcaseSection } from '@/components/sections/ShowcaseSection'
 import { FAQSection } from '@/components/sections/FAQSection'
+import { PartnersSection } from '@/components/sections/PartnersSection'
 import { ContactSection } from '@/components/sections/ContactSection'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -28,6 +29,7 @@ export default function Index() {
       <AboutSection />
       <ShowcaseSection />
       <FAQSection />
+      <PartnersSection />
       <ContactSection />
     </div>
   )

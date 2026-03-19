@@ -40,9 +40,9 @@ export function ContactSection() {
                 <div>
                   <h3 className="font-semibold text-lg">Telefones</h3>
                   <p className="text-muted-foreground whitespace-pre-line">
-                    Geral: {content.phone_general || '(82) 3000-0000'}
+                    {content.phone_general || '(82) 3000-0000'}
                     <br />
-                    WhatsApp: {content.phone_whatsapp || '(82) 99999-9999'}
+                    {content.phone_whatsapp || '(82) 99999-9999'}
                   </p>
                 </div>
               </div>
@@ -65,11 +65,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Horário de Atendimento</h3>
-                  <p className="text-muted-foreground">
-                    Segunda a Sexta: 08:00 às 18:00
-                    <br />
-                    Plantão Técnico 24h para contratos.
-                  </p>
+                  <p className="text-muted-foreground">Segunda a Sexta: 08:00 às 17:00</p>
                 </div>
               </div>
             </div>

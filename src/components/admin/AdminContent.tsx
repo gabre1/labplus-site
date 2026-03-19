@@ -27,6 +27,7 @@ const formSchema = z.object({
   phone_general: z.string().min(1, 'Obrigatório'),
   phone_whatsapp: z.string().min(1, 'Obrigatório'),
   address: z.string().min(1, 'Obrigatório'),
+  lead_recipient_email: z.string().email('E-mail inválido').or(z.literal('')),
   faq_items: z
     .array(
       z.object({
@@ -54,6 +55,7 @@ export function AdminContent() {
       phone_general: '',
       phone_whatsapp: '',
       address: '',
+      lead_recipient_email: '',
       faq_items: [],
     },
   })
@@ -85,6 +87,7 @@ export function AdminContent() {
           phone_general: values.phone_general || '',
           phone_whatsapp: values.phone_whatsapp || '',
           address: values.address || '',
+          lead_recipient_email: values.lead_recipient_email || '',
           faq_items: faqs,
         })
       }
@@ -111,6 +114,23 @@ export function AdminContent() {
     }
   }
 
+  const handleTestEmail = async () => {
+    const email = form.getValues('lead_recipient_email')
+    if (!email) {
+      toast({ title: 'Preencha o e-mail de recebimento antes de testar', variant: 'destructive' })
+      return
+    }
+    try {
+      toast({ title: 'Enviando e-mail de teste...' })
+      await supabase.functions.invoke('send-lead-email', {
+        body: { test: true, recipient: email },
+      })
+      toast({ title: 'E-mail de teste disparado com sucesso!' })
+    } catch (e) {
+      toast({ title: 'Erro ao enviar teste', variant: 'destructive' })
+    }
+  }
+
   return (
     <div className="space-y-6 max-w-3xl pb-8">
       <div className="pb-4">
@@ -122,6 +142,32 @@ export function AdminContent() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="space-y-4 border p-4 rounded-md bg-white">
+            <h3 className="text-lg font-semibold text-primary">Sistema de Leads</h3>
+            <div className="flex items-end gap-4">
+              <FormField
+                control={form.control}
+                name="lead_recipient_email"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>E-mail de Recebimento de Leads</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="contato@labplus.com.br" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="button" variant="secondary" onClick={handleTestEmail}>
+                Enviar e-mail de teste
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              O endereço configurado aqui receberá todos os formulários submetidos na página de
+              Atendimento Consultivo.
+            </p>
+          </div>
+
           <div className="space-y-4 border p-4 rounded-md bg-white">
             <h3 className="text-lg font-semibold text-primary">Branding & Hero</h3>
             <FormField

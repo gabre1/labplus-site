@@ -1,4 +1,4 @@
-import { ShowcaseItem, CatalogItem, SiteContent } from '@/types'
+import { ShowcaseItem, CatalogItem, SiteContent, Partner } from '@/types'
 import { supabase } from '@/lib/supabase/client'
 
 export const mockSiteContent: SiteContent = {
@@ -51,7 +51,7 @@ export const mockSiteContent: SiteContent = {
   nav_showcase: 'Oportunidades',
   nav_faq: 'FAQ',
   nav_contact: 'Contato',
-  nav_btn_diagnostic: 'Solicitar atendimento',
+  nav_btn_diagnostic: 'Atendimento Consultivo',
   address: 'Av. Menino Marcelo, 1234 - Serraria, Maceió - AL, CEP: 57000-000',
   phone_general: '(82) 3000-0000',
   phone_whatsapp: '(82) 99999-9999',
@@ -124,6 +124,21 @@ export async function fetchCatalogItems(): Promise<CatalogItem[]> {
     }
   } catch (err) {
     console.error('Supabase fetch failed for catalog_items', err)
+  }
+  return []
+}
+
+export async function fetchPartners(): Promise<Partner[]> {
+  try {
+    const { data, error } = await supabase
+      .from('partners' as any)
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (data && !error) {
+      return data
+    }
+  } catch (err) {
+    console.error('fetchPartners failed', err)
   }
   return []
 }

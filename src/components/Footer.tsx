@@ -1,4 +1,4 @@
-import { MapPin, Phone, Mail, Instagram, Linkedin } from 'lucide-react'
+import { MapPin, Phone, Mail, Instagram } from 'lucide-react'
 import { useCms } from '@/contexts/CmsContext'
 
 export function Footer() {
@@ -8,18 +8,18 @@ export function Footer() {
     <footer className="bg-[#0A0A0A] text-gray-300 py-12 border-t border-gray-800">
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-white">
+          <div className="flex items-center gap-2 text-white mb-6">
             {content?.logo_url ? (
               <img
                 src={content.logo_url}
                 alt="Logo"
-                className="h-8 w-auto object-contain brightness-0 invert"
+                className="h-14 w-auto object-contain brightness-0 invert"
               />
             ) : (
               <img
                 src="https://img.usecurling.com/i?q=labplus&color=white&shape=outline"
                 alt="Labplus Diagnóstica"
-                className="h-8 w-auto"
+                className="h-14 w-auto"
               />
             )}
             <span className="sr-only">LABPLUS</span>
@@ -28,12 +28,14 @@ export function Footer() {
             {content?.footer_info ||
               'Excelência em distribuição de equipamentos e insumos laboratoriais para todo o Nordeste.'}
           </p>
-          <div className="flex gap-4 pt-2">
-            <a href="#" className="hover:text-primary transition-colors">
+          <div className="flex gap-4 pt-4">
+            <a
+              href="https://www.instagram.com/labplusdiagnostica/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors bg-white/10 p-2 rounded-full"
+            >
               <Instagram className="h-5 w-5" />
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
-              <Linkedin className="h-5 w-5" />
             </a>
           </div>
         </div>
@@ -53,7 +55,7 @@ export function Footer() {
             </li>
             <li>
               <a href="/diagnostico" className="hover:text-primary transition-colors">
-                {content?.nav_btn_diagnostic || 'Solicitar atendimento'}
+                {content?.nav_btn_diagnostic || 'Atendimento Consultivo'}
               </a>
             </li>
             <li>
@@ -67,17 +69,19 @@ export function Footer() {
         <div>
           <h3 className="text-white font-semibold mb-4">Contato</h3>
           <ul className="space-y-3 text-sm">
-            <li className="flex items-start gap-2">
-              <Phone className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-              <span className="whitespace-pre-line">
+            <li className="flex items-start gap-3">
+              <Phone className="h-5 w-5 mt-0.5 text-primary shrink-0" />
+              <span className="whitespace-pre-line text-base">
                 {content?.phone_general || '(82) 3000-0000'}
                 <br />
-                {content?.phone_whatsapp && `WhatsApp: ${content.phone_whatsapp}`}
+                {content?.phone_whatsapp || '(82) 99999-9999'}
               </span>
             </li>
-            <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-primary shrink-0" />
-              <span>{content?.contact_email || 'contato@labplus.com.br'}</span>
+            <li className="flex items-center gap-3">
+              <Mail className="h-5 w-5 text-primary shrink-0" />
+              <span className="text-base">
+                {content?.contact_email || 'contato@labplus.com.br'}
+              </span>
             </li>
           </ul>
         </div>
@@ -85,9 +89,9 @@ export function Footer() {
         <div>
           <h3 className="text-white font-semibold mb-4">Localização</h3>
           <ul className="space-y-2 text-sm">
-            <li className="flex items-start gap-2">
-              <MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-              <span className="whitespace-pre-line">
+            <li className="flex items-start gap-3">
+              <MapPin className="h-5 w-5 mt-0.5 text-primary shrink-0" />
+              <span className="whitespace-pre-line text-base">
                 {content?.address?.replace(', ', '\n') ||
                   'Av. Menino Marcelo, 1234\nSerraria, Maceió - AL\nCEP: 57000-000'}
               </span>

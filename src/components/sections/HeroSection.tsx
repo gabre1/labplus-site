@@ -72,7 +72,7 @@ export function HeroSection() {
               size="lg"
               className="h-auto py-4 flex flex-col items-center gap-2 w-full bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white hover:scale-[1.02] transition-transform"
             >
-              <a href="#contato">
+              <a href="https://maxlab.auvo.com.br/" target="_blank" rel="noopener noreferrer">
                 <Headset className="h-6 w-6" />
                 <span>{content.hero_btn_support}</span>
               </a>

@@ -20,15 +20,19 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full glass-header bg-white/80 backdrop-blur-md border-b">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-24 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           {content?.logo_url ? (
-            <img src={content.logo_url} alt="Logo" className="h-10 w-auto object-contain" />
+            <img
+              src={content.logo_url}
+              alt="Logo"
+              className="h-14 md:h-16 w-auto object-contain py-1"
+            />
           ) : (
             <img
               src="https://img.usecurling.com/i?q=labplus&color=blue&shape=outline"
               alt="Labplus Diagnóstica"
-              className="h-10 w-auto"
+              className="h-14 md:h-16 w-auto py-1"
             />
           )}
           <span className="sr-only">LABPLUS</span>
@@ -45,7 +49,9 @@ export function Header() {
           </div>
           {content && (
             <Button asChild className="rounded-full px-6">
-              <Link to="/diagnostico">{content.nav_btn_diagnostic || 'Solicitar atendimento'}</Link>
+              <Link to="/diagnostico">
+                {content.nav_btn_diagnostic || 'Atendimento Consultivo'}
+              </Link>
             </Button>
           )}
         </nav>
@@ -80,7 +86,7 @@ export function Header() {
                       onClick={() => setIsOpen(false)}
                     >
                       <Link to="/diagnostico">
-                        {content.nav_btn_diagnostic || 'Solicitar atendimento'}
+                        {content.nav_btn_diagnostic || 'Atendimento Consultivo'}
                       </Link>
                     </Button>
                   </div>
