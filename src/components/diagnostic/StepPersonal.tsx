@@ -11,7 +11,7 @@ interface Props {
   onNext: () => void
 }
 
-export function Step1Personal({ data, updateData, onNext }: Props) {
+export function StepPersonal({ data, updateData, onNext }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const validateAndNext = () => {
@@ -41,7 +41,7 @@ export function Step1Personal({ data, updateData, onNext }: Props) {
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Vamos começar!</h2>
         <p className="text-muted-foreground">
-          Precisamos de algumas informações básicas para personalizar seu diagnóstico.
+          Precisamos de algumas informações básicas para personalizar seu atendimento.
         </p>
       </div>
 

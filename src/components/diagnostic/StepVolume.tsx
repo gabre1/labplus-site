@@ -12,12 +12,12 @@ interface Props {
   isLoading: boolean
 }
 
-export function Step4Volume({ data, updateData, onSubmit, onPrev, isLoading }: Props) {
+export function StepVolume({ data, updateData, onSubmit, onPrev, isLoading }: Props) {
   const volumes = [
-    { id: 'Até 50', label: 'Até 50 testes / dia' },
-    { id: '51 a 200', label: 'De 51 a 200 testes / dia' },
-    { id: '201 a 300', label: 'De 201 a 300 testes / dia' },
-    { id: 'Acima de 300', label: 'Acima de 300 testes / dia' },
+    { id: 'Até 50', label: 'Até 50 testes / mês' },
+    { id: '51 a 200', label: 'De 51 a 200 testes / mês' },
+    { id: '201 a 300', label: 'De 201 a 300 testes / mês' },
+    { id: 'Acima de 300', label: 'Acima de 300 testes / mês' },
   ]
 
   return (
@@ -25,7 +25,7 @@ export function Step4Volume({ data, updateData, onSubmit, onPrev, isLoading }: P
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold mb-2">Qual a demanda estimada?</h2>
         <p className="text-muted-foreground">
-          Isso nos ajuda a dimensionar a capacidade do equipamento ideal.
+          Isso nos ajuda a dimensionar a nossa recomendação para a sua demanda.
         </p>
       </div>
 
@@ -57,11 +57,11 @@ export function Step4Volume({ data, updateData, onSubmit, onPrev, isLoading }: P
           {isLoading ? (
             <span className="flex items-center gap-2">
               <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
-              Analisando...
+              Enviando...
             </span>
           ) : (
             <span className="flex items-center gap-2">
-              Ver Resultado <CheckCircle className="h-4 w-4" />
+              Concluir <CheckCircle className="h-4 w-4" />
             </span>
           )}
         </Button>

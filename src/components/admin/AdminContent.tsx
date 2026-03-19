@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { supabase } from '@/lib/supabase/client'
@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useCms } from '@/contexts/CmsContext'
+import { Trash } from 'lucide-react'
 
 const formSchema = z.object({
   logo_url: z.string().url('URL inválida').or(z.literal('')),
@@ -23,7 +24,17 @@ const formSchema = z.object({
   hero_description: z.string().min(1, 'Obrigatório'),
   about_text: z.string().min(1, 'Obrigatório'),
   contact_email: z.string().email('E-mail inválido').or(z.literal('')),
-  contact_phone: z.string().min(1, 'Obrigatório'),
+  phone_general: z.string().min(1, 'Obrigatório'),
+  phone_whatsapp: z.string().min(1, 'Obrigatório'),
+  address: z.string().min(1, 'Obrigatório'),
+  faq_items: z
+    .array(
+      z.object({
+        question: z.string().min(1, 'Obrigatório'),
+        answer: z.string().min(1, 'Obrigatório'),
+      }),
+    )
+    .optional(),
 })
 
 type ContentFormValues = z.infer<typeof formSchema>
@@ -40,9 +51,14 @@ export function AdminContent() {
       hero_description: '',
       about_text: '',
       contact_email: '',
-      contact_phone: '',
+      phone_general: '',
+      phone_whatsapp: '',
+      address: '',
+      faq_items: [],
     },
   })
+
+  const faqFields = useFieldArray({ control: form.control, name: 'faq_items' })
 
   useEffect(() => {
     async function load() {
@@ -50,13 +66,24 @@ export function AdminContent() {
       if (data) {
         const values: Record<string, string> = {}
         data.forEach((d: any) => (values[d.key] = d.value))
+
+        let faqs = []
+        if (values.faq_items) {
+          try {
+            faqs = JSON.parse(values.faq_items)
+          } catch (e) {}
+        }
+
         form.reset({
           logo_url: values.logo_url || '',
           hero_title: values.hero_title || '',
           hero_description: values.hero_description || '',
           about_text: values.about_text || '',
           contact_email: values.contact_email || '',
-          contact_phone: values.contact_phone || '',
+          phone_general: values.phone_general || '',
+          phone_whatsapp: values.phone_whatsapp || '',
+          address: values.address || '',
+          faq_items: faqs,
         })
       }
     }
@@ -66,7 +93,7 @@ export function AdminContent() {
   const onSubmit = async (data: ContentFormValues) => {
     const updates = Object.entries(data).map(([key, value]) => ({
       key,
-      value: value as string,
+      value: typeof value === 'object' ? JSON.stringify(value) : (value as string),
       updated_at: new Date().toISOString(),
     }))
 
@@ -76,7 +103,6 @@ export function AdminContent() {
 
     if (error) {
       toast({ title: 'Erro ao salvar o conteúdo', variant: 'destructive' })
-      console.error(error)
     } else {
       toast({ title: 'Conteúdo salvo com sucesso!' })
       refreshContent()
@@ -84,18 +110,18 @@ export function AdminContent() {
   }
 
   return (
-    <div className="space-y-6 max-w-2xl pb-8">
+    <div className="space-y-6 max-w-3xl pb-8">
       <div className="pb-4">
         <h2 className="text-xl font-bold">Conteúdo Geral</h2>
         <p className="text-muted-foreground text-sm">
-          Atualize os textos principais, branding e informações institucionais do site.
+          Atualize os textos principais, branding e informações do site.
         </p>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="space-y-4 border p-4 rounded-md bg-white">
-            <h3 className="text-lg font-semibold text-primary">Branding</h3>
+            <h3 className="text-lg font-semibold text-primary">Branding & Hero</h3>
             <FormField
               control={form.control}
               name="logo_url"
@@ -103,16 +129,12 @@ export function AdminContent() {
                 <FormItem>
                   <FormLabel>URL da Logo</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-
-          <div className="space-y-4 border p-4 rounded-md bg-white">
-            <h3 className="text-lg font-semibold text-primary">Seção Principal (Hero)</h3>
             <FormField
               control={form.control}
               name="hero_title"
@@ -131,9 +153,9 @@ export function AdminContent() {
               name="hero_description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descrição / Subtítulo</FormLabel>
+                  <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Textarea className="h-24" {...field} />
+                    <Textarea className="h-20" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,25 +164,21 @@ export function AdminContent() {
           </div>
 
           <div className="space-y-4 border p-4 rounded-md bg-white">
-            <h3 className="text-lg font-semibold text-primary">Institucional</h3>
+            <h3 className="text-lg font-semibold text-primary">Contato & Endereço</h3>
             <FormField
               control={form.control}
-              name="about_text"
+              name="address"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Texto "Sobre Nós"</FormLabel>
+                  <FormLabel>Endereço Completo</FormLabel>
                   <FormControl>
-                    <Textarea className="h-32" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-
-          <div className="space-y-4 border p-4 rounded-md bg-white">
-            <h3 className="text-lg font-semibold text-primary">Contato</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
                 name="contact_email"
@@ -176,18 +194,89 @@ export function AdminContent() {
               />
               <FormField
                 control={form.control}
-                name="contact_phone"
+                name="phone_general"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone / WhatsApp</FormLabel>
+                    <FormLabel>Telefone Geral</FormLabel>
                     <FormControl>
-                      <Input placeholder="(00) 0000-0000" {...field} />
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone_whatsapp"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>WhatsApp</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+          </div>
+
+          <div className="space-y-4 border p-4 rounded-md bg-white">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-primary">FAQ (Perguntas Frequentes)</h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => faqFields.append({ question: '', answer: '' })}
+              >
+                Adicionar nova linha
+              </Button>
+            </div>
+            {faqFields.fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="flex items-start gap-4 p-4 border rounded-md relative bg-slate-50"
+              >
+                <div className="flex-1 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name={`faq_items.${index}.question`}
+                    render={({ field: f }) => (
+                      <FormItem>
+                        <FormLabel>Pergunta</FormLabel>
+                        <FormControl>
+                          <Input {...f} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`faq_items.${index}.answer`}
+                    render={({ field: f }) => (
+                      <FormItem>
+                        <FormLabel>Resposta</FormLabel>
+                        <FormControl>
+                          <Textarea className="h-16" {...f} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => faqFields.remove(index)}
+                  className="text-destructive mt-8"
+                >
+                  <Trash className="h-5 w-5" />
+                </Button>
+              </div>
+            ))}
           </div>
 
           <Button type="submit" size="lg" className="w-full md:w-auto">

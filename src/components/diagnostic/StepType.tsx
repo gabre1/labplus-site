@@ -16,7 +16,7 @@ interface Props {
   onPrev: () => void
 }
 
-export function Step3Type({ data, updateData, onNext, onPrev }: Props) {
+export function StepType({ data, updateData, onNext, onPrev }: Props) {
   const types = [
     'Hematologia',
     'Bioquímica',

@@ -22,9 +22,7 @@ export function Footer() {
                 className="h-8 w-auto"
               />
             )}
-            <span className="font-bold text-xl tracking-tight">
-              LAB<span className="text-primary">PLUS</span>
-            </span>
+            <span className="sr-only">LABPLUS</span>
           </div>
           <p className="text-sm text-gray-400">
             {content?.footer_info ||
@@ -55,7 +53,7 @@ export function Footer() {
             </li>
             <li>
               <a href="/diagnostico" className="hover:text-primary transition-colors">
-                {content?.nav_btn_diagnostic || 'Diagnóstico Consultivo'}
+                {content?.nav_btn_diagnostic || 'Solicitar atendimento'}
               </a>
             </li>
             <li>
@@ -72,8 +70,9 @@ export function Footer() {
             <li className="flex items-start gap-2">
               <Phone className="h-4 w-4 mt-0.5 text-primary shrink-0" />
               <span className="whitespace-pre-line">
-                {content?.contact_phone?.replace(' / ', '\n') ||
-                  '(82) 3000-0000\n(82) 99999-9999 (WhatsApp)'}
+                {content?.phone_general || '(82) 3000-0000'}
+                <br />
+                {content?.phone_whatsapp && `WhatsApp: ${content.phone_whatsapp}`}
               </span>
             </li>
             <li className="flex items-center gap-2">
@@ -88,12 +87,9 @@ export function Footer() {
           <ul className="space-y-2 text-sm">
             <li className="flex items-start gap-2">
               <MapPin className="h-4 w-4 mt-0.5 text-primary shrink-0" />
-              <span>
-                Av. Menino Marcelo, 1234
-                <br />
-                Serraria, Maceió - AL
-                <br />
-                CEP: 57000-000
+              <span className="whitespace-pre-line">
+                {content?.address?.replace(', ', '\n') ||
+                  'Av. Menino Marcelo, 1234\nSerraria, Maceió - AL\nCEP: 57000-000'}
               </span>
             </li>
           </ul>

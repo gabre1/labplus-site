@@ -10,13 +10,13 @@ export const mockSiteContent: SiteContent = {
   hero_title_highlight: 'Suporte Laboratorial',
   hero_subtitle:
     'Equipamentos de ponta, insumos de alta qualidade e assistência técnica especializada para garantir a máxima eficiência do seu laboratório.',
-  hero_btn_diagnostic: 'Diagnóstico Consultivo',
+  hero_btn_diagnostic: 'Atendimento Consultivo',
   hero_btn_showcase: 'Vitrine de Oportunidades',
   hero_btn_support: 'Assistência Técnica',
   about_title_1: 'Infraestrutura Robusta para o seu ',
   about_title_highlight: 'Crescimento',
   about_text:
-    'A Labplus Diagnóstica nasceu com o propósito de elevar o padrão do suporte laboratorial. Localizados estrategicamente em Maceió, Alagoas, garantimos agilidade logística incomparável.',
+    'A Labplus Diagnóstica nasceu com o propósito de elevating o padrão do suporte laboratorial. Localizados estrategicamente em Maceió, Alagoas, garantimos agilidade logística incomparável.',
   about_benefits: [
     'Agilidade Logística em todo o Nordeste',
     'Estoque estratégico e peças de reposição',
@@ -44,56 +44,35 @@ export const mockSiteContent: SiteContent = {
   contact_title_1: 'Localização e ',
   contact_title_highlight: 'Contato',
   contact_subtitle: 'Nossa matriz está localizada estrategicamente para atender sua demanda.',
-  diagnostic_title_1: 'Diagnóstico ',
+  diagnostic_title_1: 'Atendimento ',
   diagnostic_title_highlight: 'Consultivo',
   diagnostic_success_msg: 'Informações recebidas com sucesso! Em breve entraremos em contato.',
   nav_about: 'Sobre Nós',
   nav_showcase: 'Oportunidades',
   nav_faq: 'FAQ',
   nav_contact: 'Contato',
-  nav_btn_diagnostic: 'Solicitar Diagnóstico',
-}
-
-function getPbImageUrl(item: any, fieldName: string) {
-  const fileName = item[fieldName]
-  if (!fileName) return undefined
-  if (fileName.startsWith('http') || fileName.startsWith('data:')) return fileName
-  const backendUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_BACKEND_URL || ''
-  return `${backendUrl}/api/files/${item.collectionId}/${item.id}/${fileName}`
+  nav_btn_diagnostic: 'Solicitar atendimento',
+  address: 'Av. Menino Marcelo, 1234 - Serraria, Maceió - AL, CEP: 57000-000',
+  phone_general: '(82) 3000-0000',
+  phone_whatsapp: '(82) 99999-9999',
 }
 
 export async function fetchSiteContent(): Promise<any> {
   const content = { ...mockSiteContent } as any
 
   try {
-    // Legacy PocketBase Check (can be eventually removed if fully migrated)
-    const backendUrl = import.meta.env.VITE_POCKETBASE_URL || import.meta.env.VITE_BACKEND_URL || ''
-    if (backendUrl) {
-      const url = `${backendUrl}/api/collections/SiteContent/records`
-      const response = await fetch(url)
-      if (response.ok) {
-        const data = await response.json()
-        if (data.items && data.items.length > 0) {
-          const dbData = data.items[0]
-          if (typeof dbData.about_benefits === 'string')
-            dbData.about_benefits = JSON.parse(dbData.about_benefits)
-          if (typeof dbData.faq_items === 'string') dbData.faq_items = JSON.parse(dbData.faq_items)
-          if (dbData.logo_url)
-            dbData.logo_url = getPbImageUrl(dbData, 'logo_url') || dbData.logo_url
-          Object.assign(content, dbData)
-        }
-      }
-    }
-  } catch (error) {
-    console.warn('PocketBase fetch failed')
-  }
-
-  try {
-    // Supabase Dynamic Content Fetch
     const { data, error } = await supabase.from('site_content' as any).select('*')
     if (data && !error) {
       data.forEach((item: any) => {
-        content[item.key] = item.value
+        if (item.key === 'faq_items' && typeof item.value === 'string') {
+          try {
+            content[item.key] = JSON.parse(item.value)
+          } catch (e) {
+            content[item.key] = item.value
+          }
+        } else {
+          content[item.key] = item.value
+        }
       })
     }
   } catch (error) {

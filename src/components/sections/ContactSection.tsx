@@ -26,10 +26,9 @@ export function ContactSection() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">Endereço (Matriz)</h3>
-                  <p className="text-muted-foreground">
-                    Av. Menino Marcelo, 1234 - Serraria
-                    <br />
-                    Maceió - AL, CEP: 57000-000
+                  <p className="text-muted-foreground whitespace-pre-line">
+                    {content.address ||
+                      'Av. Menino Marcelo, 1234 - Serraria\nMaceió - AL, CEP: 57000-000'}
                   </p>
                 </div>
               </div>
@@ -41,8 +40,9 @@ export function ContactSection() {
                 <div>
                   <h3 className="font-semibold text-lg">Telefones</h3>
                   <p className="text-muted-foreground whitespace-pre-line">
-                    {content.contact_phone?.replace(' / ', '\n') ||
-                      '(82) 3000-0000\n(82) 99999-9999'}
+                    Geral: {content.phone_general || '(82) 3000-0000'}
+                    <br />
+                    WhatsApp: {content.phone_whatsapp || '(82) 99999-9999'}
                   </p>
                 </div>
               </div>
@@ -75,10 +75,9 @@ export function ContactSection() {
             </div>
           </div>
 
-          <div className="h-[400px] lg:h-auto rounded-xl overflow-hidden shadow-lg border border-border">
-            {/* Embedded Google Maps - showing Maceió AL */}
+          <div className="h-[400px] lg:h-auto rounded-xl overflow-hidden shadow-lg border border-border bg-slate-200">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125557.51465243163!2d-35.80376785642721!3d-9.646960136653597!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x70145a331ab7d5f%3A0xc0fbba138e63a34a!2sMacei%C3%B3%20-%20AL!5e0!3m2!1spt-BR!2sbr!4v1715000000000!5m2!1spt-BR!2sbr"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(content.address || 'Maceió - AL')}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
               width="100%"
               height="100%"
               style={{ border: 0 }}

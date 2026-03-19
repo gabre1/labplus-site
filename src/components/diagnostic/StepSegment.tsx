@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { User, Dog, ArrowRight, ArrowLeft } from 'lucide-react'
+import { ArrowRight, ArrowLeft } from 'lucide-react'
 import { DiagnosticFormData } from '@/types'
 import { cn } from '@/lib/utils'
 
@@ -10,12 +10,11 @@ interface Props {
   onPrev: () => void
 }
 
-export function Step2Segment({ data, updateData, onNext, onPrev }: Props) {
+export function StepSegment({ data, updateData, onNext, onPrev }: Props) {
   const segments = [
-    { id: 'Humano', icon: User, title: 'Laboratório Humano', desc: 'Análises clínicas humanas' },
+    { id: 'Humano', title: 'Laboratório Humano', desc: 'Análises clínicas humanas' },
     {
       id: 'Veterinário',
-      icon: Dog,
       title: 'Laboratório Veterinário',
       desc: 'Análises para pets e grandes animais',
     },
@@ -40,7 +39,6 @@ export function Step2Segment({ data, updateData, onNext, onPrev }: Props) {
                 : 'border-border hover:border-primary/50 hover:bg-slate-50',
             )}
           >
-            <item.icon className="h-12 w-12" />
             <div className="text-center">
               <h3 className="font-bold text-lg text-foreground">{item.title}</h3>
               <p className="text-sm text-muted-foreground mt-1">{item.desc}</p>

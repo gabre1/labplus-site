@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, FileText, Share2, Home } from 'lucide-react'
+import { CheckCircle, FileText, Home } from 'lucide-react'
 import { CatalogItem } from '@/types'
 import { Link } from 'react-router-dom'
 import { useCms } from '@/contexts/CmsContext'
@@ -20,7 +20,7 @@ export function StepSuccess({ match }: Props) {
             <CheckCircle className="h-16 w-16 text-green-600 animate-pulse-soft" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-foreground">Diagnóstico Concluído!</h2>
+        <h2 className="text-3xl font-bold text-foreground">Concluído!</h2>
         <p className="text-lg text-muted-foreground max-w-lg mx-auto font-medium text-green-700">
           {content?.diagnostic_success_msg ||
             'Informações recebidas com sucesso! Em breve, um especialista entrará em contato com a melhor solução.'}
@@ -45,25 +45,18 @@ export function StepSuccess({ match }: Props) {
               </span>
             </div>
             <p className="pt-4 text-muted-foreground">
-              Um de nossos especialistas comerciais entrará em contato em breve via WhatsApp para
-              apresentar a proposta comercial completa e enviar as brochuras técnicas.
+              Um de nossos especialistas comerciais entrará em contato para apresentar a proposta
+              comercial completa.
             </p>
           </CardContent>
         </Card>
       )}
 
-      <div className="flex flex-col sm:flex-row justify-center gap-4 pt-8">
+      <div className="flex justify-center gap-4 pt-8">
         <Button asChild variant="outline" size="lg" className="gap-2">
           <Link to="/">
             <Home className="h-5 w-5" /> Voltar ao Início
           </Link>
-        </Button>
-        <Button
-          size="lg"
-          className="gap-2 bg-green-600 hover:bg-green-700 text-white"
-          onClick={() => window.open('https://wa.me/5582999999999', '_blank')}
-        >
-          <Share2 className="h-5 w-5" /> Falar com Especialista Agora
         </Button>
       </div>
     </div>

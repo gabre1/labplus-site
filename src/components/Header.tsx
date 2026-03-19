@@ -31,9 +31,7 @@ export function Header() {
               className="h-10 w-auto"
             />
           )}
-          <span className="font-bold text-2xl tracking-tight hidden sm:block">
-            LAB<span className="text-primary">PLUS</span>
-          </span>
+          <span className="sr-only">LABPLUS</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -47,7 +45,7 @@ export function Header() {
           </div>
           {content && (
             <Button asChild className="rounded-full px-6">
-              <Link to="/diagnostico">{content.nav_btn_diagnostic || 'Solicitar Diagnóstico'}</Link>
+              <Link to="/diagnostico">{content.nav_btn_diagnostic || 'Solicitar atendimento'}</Link>
             </Button>
           )}
         </nav>
@@ -82,7 +80,7 @@ export function Header() {
                       onClick={() => setIsOpen(false)}
                     >
                       <Link to="/diagnostico">
-                        {content.nav_btn_diagnostic || 'Solicitar Diagnóstico'}
+                        {content.nav_btn_diagnostic || 'Solicitar atendimento'}
                       </Link>
                     </Button>
                   </div>

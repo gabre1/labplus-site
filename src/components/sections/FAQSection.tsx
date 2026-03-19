@@ -9,7 +9,7 @@ import {
 export function FAQSection() {
   const { content } = useCms()
 
-  if (!content) return null
+  if (!content || !content.faq_items || content.faq_items.length === 0) return null
 
   return (
     <section id="faq" className="py-24 bg-background">
@@ -23,12 +23,12 @@ export function FAQSection() {
         </div>
 
         <Accordion type="single" collapsible className="w-full">
-          {content.faq_items.map((faq, index) => (
+          {content.faq_items.map((faq: any, index: number) => (
             <AccordionItem key={index} value={`item-${index}`}>
               <AccordionTrigger className="text-left text-base font-semibold">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed">
+              <AccordionContent className="text-muted-foreground leading-relaxed whitespace-pre-line">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
