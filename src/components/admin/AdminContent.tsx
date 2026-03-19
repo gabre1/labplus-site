@@ -71,7 +71,9 @@ export function AdminContent() {
         if (values.faq_items) {
           try {
             faqs = JSON.parse(values.faq_items)
-          } catch (e) {}
+          } catch (e) {
+            // ignore JSON parse error
+          }
         }
 
         form.reset({
