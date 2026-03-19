@@ -26,8 +26,7 @@ export const mockSiteContent: SiteContent = {
   showcase_badge: 'Estoque Limitado',
   showcase_title_1: 'Vitrine de ',
   showcase_title_highlight: 'Oportunidades',
-  showcase_subtitle:
-    'Equipamentos de mostruário, seminovos revisados e insumos com validade curta.',
+  showcase_subtitle: 'Itens com descontos especiais.',
   faq_title_1: 'Perguntas ',
   faq_title_highlight: 'Frequentes',
   faq_subtitle: 'Tire suas principais dúvidas sobre nossos processos e serviços.',
