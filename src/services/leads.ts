@@ -1,7 +1,10 @@
 import { supabase } from '@/lib/supabase/client'
-import { DiagnosticFormData } from '@/types'
+import { DiagnosticFormData, CatalogItem } from '@/types'
 
-export const submitLead = async (leadData: DiagnosticFormData) => {
+export const submitLead = async (
+  leadData: DiagnosticFormData,
+  match: CatalogItem | null = null,
+) => {
   const equipment_type =
     leadData.type === 'Outros' ? `Outros: ${leadData.other_type_details}` : leadData.type
 
@@ -23,22 +26,15 @@ export const submitLead = async (leadData: DiagnosticFormData) => {
         reagent_type,
         equipment_model: leadData.equipment_model,
         volume: leadData.volume,
+        recommended_item: match?.equipment_name || null,
       },
     ])
     .select()
     .single()
 
   if (!error && data) {
-    const { data: contentData } = await supabase
-      .from('site_content' as any)
-      .select('value')
-      .eq('key', 'lead_recipient_email')
-      .single()
-
-    const recipient = contentData?.value || 'contato@labplus.com.br'
-
     await supabase.functions.invoke('send-lead-email', {
-      body: { lead: data, recipient },
+      body: { lead: data, match, recipient: null }, // Recipient is fetched within the edge function
     })
   }
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Progress } from '@/components/ui/progress'
 import { Card } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
-import { DiagnosticFormData, CatalogItem } from '@/types'
+import { DiagnosticFormData } from '@/types'
 import { useCms } from '@/contexts/CmsContext'
 import { fetchCatalogItems } from '@/lib/api'
 import { submitLead } from '@/services/leads'
@@ -19,7 +19,6 @@ export default function Diagnostic() {
   const { content } = useCms()
   const [step, setStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
-  const [matchResult, setMatchResult] = useState<CatalogItem | null>(null)
   const { toast } = useToast()
 
   const [formData, setFormData] = useState<DiagnosticFormData>({
@@ -49,11 +48,10 @@ export default function Diagnostic() {
     setIsLoading(true)
 
     try {
-      await submitLead(formData)
-
+      let matchedItem = null
       if (formData.interest === 'equipment') {
         const catalogItems = await fetchCatalogItems()
-        let matchedItem = catalogItems.find((item) => {
+        matchedItem = catalogItems.find((item) => {
           const tags = item.recommendation_tags?.toLowerCase() || ''
           return (
             tags.includes(formData.segment.toLowerCase()) &&
@@ -70,11 +68,9 @@ export default function Diagnostic() {
             catalogItems[0] ||
             null
         }
-
-        setMatchResult(matchedItem)
-      } else {
-        setMatchResult(null)
       }
+
+      await submitLead(formData, matchedItem)
 
       setStep(totalSteps + 1)
     } catch (error) {
@@ -126,7 +122,7 @@ export default function Diagnostic() {
             isLoading={isLoading}
           />
         )
-      if (step === 5) return <StepSuccess match={null} />
+      if (step === 5) return <StepSuccess />
     } else {
       if (step === 3)
         return (
@@ -156,7 +152,7 @@ export default function Diagnostic() {
             isLoading={isLoading}
           />
         )
-      if (step === 6) return <StepSuccess match={matchResult} />
+      if (step === 6) return <StepSuccess />
     }
   }
 

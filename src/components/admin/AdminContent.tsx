@@ -122,12 +122,22 @@ export function AdminContent() {
     }
     try {
       toast({ title: 'Enviando e-mail de teste...' })
-      await supabase.functions.invoke('send-lead-email', {
+      const { data, error } = await supabase.functions.invoke('send-lead-email', {
         body: { test: true, recipient: email },
       })
+      if (error) {
+        throw error
+      }
+      if (data?.error) {
+        throw new Error(data.error)
+      }
       toast({ title: 'E-mail de teste disparado com sucesso!' })
-    } catch (e) {
-      toast({ title: 'Erro ao enviar teste', variant: 'destructive' })
+    } catch (e: any) {
+      toast({
+        title: 'Erro ao enviar teste',
+        description: e.message || 'Falha ao processar a requisição.',
+        variant: 'destructive',
+      })
     }
   }
 
