@@ -105,11 +105,11 @@ export async function fetchShowcaseItems(): Promise<ShowcaseItem[]> {
 export async function fetchCatalogItems(): Promise<CatalogItem[]> {
   try {
     const { data, error } = await supabase
-      .from('catalog_items')
+      .from('catalog_items' as any)
       .select('*')
       .order('created_at', { ascending: false })
     if (data && !error) {
-      return data.map((d) => ({
+      return data.map((d: any) => ({
         id: d.id,
         equipment_name: d.name,
         value: d.value || '',
@@ -119,6 +119,9 @@ export async function fetchCatalogItems(): Promise<CatalogItem[]> {
         recommendation_tags: d.recommendation_tags || '',
         image: d.image_url || '',
         description: d.description || '',
+        reagent_name: d.reagent_name || '',
+        cost_per_test: Number(d.cost_per_test) || 0,
+        avg_ticket_price: Number(d.avg_ticket_price) || 0,
       }))
     }
   } catch (err) {

@@ -20,6 +20,9 @@ export interface CatalogItem {
   recommendation_tags: string
   image: string
   description: string
+  reagent_name?: string
+  cost_per_test?: number
+  avg_ticket_price?: number
 }
 
 export interface ShowcaseItem {

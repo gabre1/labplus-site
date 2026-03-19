@@ -18,7 +18,20 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/hooks/use-toast'
+
+const SEGMENTS = ['Humano', 'Veterinário']
+const TYPES = [
+  'Hematologia',
+  'Bioquímica',
+  'Imuno/hormônio',
+  'Centrífugas',
+  'Microscópios',
+  'Biologia Molecular',
+  'Outros',
+]
+const VOLUMES = ['Até 50', '51 a 200', '201 a 300', 'Acima de 300']
 
 export function AdminCatalog() {
   const [items, setItems] = useState<any[]>([])
@@ -34,12 +47,15 @@ export function AdminCatalog() {
     recommendation_tags: '',
     image_url: '',
     description: '',
+    reagent_name: '',
+    cost_per_test: '',
+    avg_ticket_price: '',
   })
   const { toast } = useToast()
 
   const loadItems = async () => {
     const { data } = await supabase
-      .from('catalog_items')
+      .from('catalog_items' as any)
       .select('*')
       .order('created_at', { ascending: false })
     if (data) setItems(data)
@@ -51,10 +67,21 @@ export function AdminCatalog() {
 
   const handleSave = async () => {
     const { id, ...insertData } = form
+    const payload = {
+      ...insertData,
+      cost_per_test: insertData.cost_per_test ? parseFloat(insertData.cost_per_test) : null,
+      avg_ticket_price: insertData.avg_ticket_price
+        ? parseFloat(insertData.avg_ticket_price)
+        : null,
+    }
+
     if (id) {
-      await supabase.from('catalog_items').update(insertData).eq('id', id)
+      await supabase
+        .from('catalog_items' as any)
+        .update(payload)
+        .eq('id', id)
     } else {
-      await supabase.from('catalog_items').insert([insertData])
+      await supabase.from('catalog_items' as any).insert([payload])
     }
     setIsOpen(false)
     loadItems()
@@ -63,7 +90,10 @@ export function AdminCatalog() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir?')) return
-    await supabase.from('catalog_items').delete().eq('id', id)
+    await supabase
+      .from('catalog_items' as any)
+      .delete()
+      .eq('id', id)
     loadItems()
     toast({ title: 'Excluído com sucesso' })
   }
@@ -86,7 +116,35 @@ export function AdminCatalog() {
       recommendation_tags: '',
       image_url: '',
       description: '',
+      reagent_name: '',
+      cost_per_test: '',
+      avg_ticket_price: '',
     })
+
+  const handleEdit = (item: any) => {
+    setForm({
+      ...item,
+      reagent_name: item.reagent_name || '',
+      cost_per_test: item.cost_per_test?.toString() || '',
+      avg_ticket_price: item.avg_ticket_price?.toString() || '',
+      recommendation_tags: item.recommendation_tags || '',
+    })
+    setIsOpen(true)
+  }
+
+  const currentTags = form.recommendation_tags
+    ? form.recommendation_tags
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : []
+
+  const toggleTag = (tag: string) => {
+    const newTags = currentTags.includes(tag)
+      ? currentTags.filter((t) => t !== tag)
+      : [...currentTags, tag]
+    setForm({ ...form, recommendation_tags: newTags.join(', ') })
+  }
 
   return (
     <div className="space-y-4">
@@ -101,7 +159,7 @@ export function AdminCatalog() {
           <DialogTrigger asChild>
             <Button onClick={resetForm}>Adicionar Equipamento</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{form.id ? 'Editar Equipamento' : 'Adicionar Equipamento'}</DialogTitle>
             </DialogHeader>
@@ -121,9 +179,10 @@ export function AdminCatalog() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Valor</Label>
+                <Label>Valor (Texto)</Label>
                 <Input
                   value={form.value}
+                  placeholder="Ex: R$ 50.000,00"
                   onChange={(e) => setForm({ ...form, value: e.target.value })}
                 />
               </div>
@@ -134,13 +193,106 @@ export function AdminCatalog() {
                   onChange={(e) => setForm({ ...form, payment_conditions: e.target.value })}
                 />
               </div>
-              <div className="col-span-2 space-y-2">
-                <Label>Tags de Recomendação (Ex: Humano, Hematologia, Até 50)</Label>
-                <Input
-                  value={form.recommendation_tags}
-                  onChange={(e) => setForm({ ...form, recommendation_tags: e.target.value })}
-                />
+
+              <div className="col-span-2 space-y-4 border p-4 rounded-md bg-slate-50">
+                <Label className="text-base font-semibold">
+                  Tags de Recomendação (Seleção Múltipla)
+                </Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-muted-foreground">
+                      Segmento Atendido
+                    </Label>
+                    <div className="flex flex-col gap-2">
+                      {SEGMENTS.map((tag) => (
+                        <div key={tag} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`tag-${tag}`}
+                            checked={currentTags.includes(tag)}
+                            onCheckedChange={() => toggleTag(tag)}
+                          />
+                          <Label htmlFor={`tag-${tag}`} className="cursor-pointer font-normal">
+                            {tag}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-muted-foreground">
+                      Tipo de Equipamento
+                    </Label>
+                    <div className="flex flex-col gap-2">
+                      {TYPES.map((tag) => (
+                        <div key={tag} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`tag-${tag}`}
+                            checked={currentTags.includes(tag)}
+                            onCheckedChange={() => toggleTag(tag)}
+                          />
+                          <Label htmlFor={`tag-${tag}`} className="cursor-pointer font-normal">
+                            {tag}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium text-muted-foreground">
+                      Faixa de Volume Atendida
+                    </Label>
+                    <div className="flex flex-col gap-2">
+                      {VOLUMES.map((tag) => (
+                        <div key={tag} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`tag-${tag}`}
+                            checked={currentTags.includes(tag)}
+                            onCheckedChange={() => toggleTag(tag)}
+                          />
+                          <Label htmlFor={`tag-${tag}`} className="cursor-pointer font-normal">
+                            {tag}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
+
+              <div className="col-span-2 space-y-4 border p-4 rounded-md bg-blue-50/50">
+                <Label className="text-base font-semibold">Dados Financeiros para ROI</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Reagente Principal</Label>
+                    <Input
+                      value={form.reagent_name}
+                      placeholder="Ex: Kit Completo"
+                      onChange={(e) => setForm({ ...form, reagent_name: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Custo por Teste (R$)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={form.cost_per_test}
+                      placeholder="Ex: 2.50"
+                      onChange={(e) => setForm({ ...form, cost_per_test: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Ticket Médio de Venda (R$)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={form.avg_ticket_price}
+                      placeholder="Ex: 15.00"
+                      onChange={(e) => setForm({ ...form, avg_ticket_price: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label>URL da Imagem</Label>
                 <Input
@@ -188,14 +340,7 @@ export function AdminCatalog() {
                   {item.recommendation_tags}
                 </TableCell>
                 <TableCell className="space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setForm(item)
-                      setIsOpen(true)
-                    }}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => handleEdit(item)}>
                     Editar
                   </Button>
                   <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>

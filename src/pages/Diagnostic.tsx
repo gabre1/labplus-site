@@ -48,7 +48,15 @@ export default function Diagnostic() {
     setIsLoading(true)
 
     try {
+      const exactVolume = parseInt(formData.volume, 10) || 0
+      let volumeCategory = 'Acima de 300'
+      if (exactVolume <= 50) volumeCategory = 'Até 50'
+      else if (exactVolume <= 200) volumeCategory = '51 a 200'
+      else if (exactVolume <= 300) volumeCategory = '201 a 300'
+
       let matchedItem = null
+      let roiData = null
+
       if (formData.interest === 'equipment') {
         const catalogItems = await fetchCatalogItems()
         matchedItem = catalogItems.find((item) => {
@@ -56,7 +64,7 @@ export default function Diagnostic() {
           return (
             tags.includes(formData.segment.toLowerCase()) &&
             tags.includes(formData.type.toLowerCase()) &&
-            tags.includes(formData.volume.toLowerCase())
+            tags.includes(volumeCategory.toLowerCase())
           )
         })
 
@@ -68,9 +76,42 @@ export default function Diagnostic() {
             catalogItems[0] ||
             null
         }
+
+        const excludedTypes = ['Microscópios', 'Centrífugas', 'Outros']
+        if (matchedItem && !excludedTypes.includes(formData.type)) {
+          const avgTicket = matchedItem.avg_ticket_price || 0
+          const costTest = matchedItem.cost_per_test || 0
+
+          let equipValue = 0
+          if (matchedItem.value) {
+            let cleanVal = matchedItem.value.replace(/[R$\s]/g, '')
+            if (cleanVal.includes(',') && cleanVal.includes('.')) {
+              cleanVal = cleanVal.replace(/\./g, '').replace(',', '.')
+            } else if (cleanVal.includes(',')) {
+              cleanVal = cleanVal.replace(',', '.')
+            }
+            equipValue = parseFloat(cleanVal) || 0
+          }
+
+          if (avgTicket > 0 && exactVolume > 0) {
+            const lucroBrutoMensal = (avgTicket - costTest) * exactVolume
+            let paybackMonths = 0
+            if (lucroBrutoMensal > 0 && equipValue > 0) {
+              paybackMonths = Math.ceil(equipValue / lucroBrutoMensal)
+            }
+
+            roiData = {
+              reagent_name: matchedItem.reagent_name || 'Reagente Principal',
+              cost_per_test: costTest,
+              volume: exactVolume,
+              lucro_bruto: lucroBrutoMensal,
+              payback_months: paybackMonths,
+            }
+          }
+        }
       }
 
-      await submitLead(formData, matchedItem)
+      await submitLead(formData, matchedItem, roiData)
 
       setStep(totalSteps + 1)
     } catch (error) {

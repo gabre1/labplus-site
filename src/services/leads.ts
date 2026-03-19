@@ -4,6 +4,7 @@ import { DiagnosticFormData, CatalogItem } from '@/types'
 export const submitLead = async (
   leadData: DiagnosticFormData,
   match: CatalogItem | null = null,
+  roi: any = null,
 ) => {
   const equipment_type =
     leadData.type === 'Outros' ? `Outros: ${leadData.other_type_details}` : leadData.type
@@ -34,7 +35,7 @@ export const submitLead = async (
 
   if (!error && data) {
     await supabase.functions.invoke('send-lead-email', {
-      body: { lead: data, match, recipient: null }, // Recipient is fetched within the edge function
+      body: { lead: data, match, roi, recipient: null },
     })
   }
 
