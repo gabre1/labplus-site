@@ -23,6 +23,7 @@ export function StepType({ data, updateData, onNext, onPrev }: Props) {
     'Hematologia',
     'Bioquímica',
     'Imuno/hormônio',
+    'Uroanálise',
     'Centrífugas',
     'Microscópios',
     'Biologia Molecular',

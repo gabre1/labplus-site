@@ -29,10 +29,11 @@ export function ShowcaseSection() {
   if (!content) return null
 
   const getWhatsAppLink = (itemName: string) => {
+    const whatsappNumber = content.phone_whatsapp?.replace(/\D/g, '') || '5582999999999'
     const text = encodeURIComponent(
       `Olá! Tenho interesse no item "${itemName}" da Vitrine de Oportunidades.`,
     )
-    return `https://wa.me/5582999999999?text=${text}`
+    return `https://wa.me/${whatsappNumber}?text=${text}`
   }
 
   return (

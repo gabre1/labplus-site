@@ -26,6 +26,7 @@ const TYPES = [
   'Hematologia',
   'Bioquímica',
   'Imuno/hormônio',
+  'Uroanálise',
   'Centrífugas',
   'Microscópios',
   'Biologia Molecular',
