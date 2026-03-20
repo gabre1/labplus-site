@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'Labplus Leads <atendimento@labplusdiagnostica.com.br>',
+          from: 'Labplus Leads <atendimento@leads.labplusdiagnostica.com.br>',
           to: [finalRecipient],
           subject: 'Teste de Integração - Leads Labplus',
           html: '<p>Este é um e-mail de teste do sistema de leads da Labplus.</p>',
@@ -99,6 +99,7 @@ Deno.serve(async (req: Request) => {
             ? `
         <div style="margin-top: 24px; padding: 16px; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
           <h3 style="margin-top: 0; color: #0f172a;">Recomendação do Sistema</h3>
+          ${match.image || match.image_url ? `<img src="${match.image || match.image_url}" alt="${match.equipment_name || 'Equipamento'}" style="max-width: 250px; height: auto; border-radius: 4px; margin-bottom: 12px; display: block;" />` : ''}
           <p style="margin: 6px 0;"><strong>Equipamento Recomendado:</strong> ${match.equipment_name}</p>
           <p style="margin: 6px 0;"><strong>Fabricante:</strong> ${match.provider}</p>
           <p style="margin: 6px 0;"><strong>Valor:</strong> ${match.value || 'Sob consulta'}</p>
@@ -120,7 +121,7 @@ Deno.serve(async (req: Request) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Labplus Leads <atendimento@labplusdiagnostica.com.br>',
+        from: 'Labplus Leads <atendimento@leads.labplusdiagnostica.com.br>',
         to: [finalRecipient],
         subject: `Novo Lead Capturado: ${lead.name}`,
         html: htmlContent,

@@ -33,6 +33,27 @@ const TYPES = [
 ]
 const VOLUMES = ['Até 50', '51 a 200', '201 a 300', 'Acima de 300']
 
+const formatBRLInput = (val: string) => {
+  const digits = val.replace(/\D/g, '')
+  if (!digits) return ''
+  const num = parseInt(digits, 10) / 100
+  return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+}
+
+const parseCurrencyToNumber = (val: string) => {
+  if (!val) return null
+  const digits = val.replace(/\D/g, '')
+  if (!digits) return null
+  return parseInt(digits, 10) / 100
+}
+
+const formatBRLFromNumber = (num: number | string | null) => {
+  if (num === null || num === undefined) return ''
+  const val = typeof num === 'string' ? parseFloat(num) : num
+  if (isNaN(val)) return ''
+  return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+}
+
 export function AdminCatalog() {
   const [items, setItems] = useState<any[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -69,10 +90,8 @@ export function AdminCatalog() {
     const { id, ...insertData } = form
     const payload = {
       ...insertData,
-      cost_per_test: insertData.cost_per_test ? parseFloat(insertData.cost_per_test) : null,
-      avg_ticket_price: insertData.avg_ticket_price
-        ? parseFloat(insertData.avg_ticket_price)
-        : null,
+      cost_per_test: parseCurrencyToNumber(insertData.cost_per_test),
+      avg_ticket_price: parseCurrencyToNumber(insertData.avg_ticket_price),
     }
 
     if (id) {
@@ -125,8 +144,9 @@ export function AdminCatalog() {
     setForm({
       ...item,
       reagent_name: item.reagent_name || '',
-      cost_per_test: item.cost_per_test?.toString() || '',
-      avg_ticket_price: item.avg_ticket_price?.toString() || '',
+      cost_per_test: item.cost_per_test ? formatBRLFromNumber(item.cost_per_test) : '',
+      avg_ticket_price: item.avg_ticket_price ? formatBRLFromNumber(item.avg_ticket_price) : '',
+      value: item.value ? (item.value.match(/\d/) ? formatBRLInput(item.value) : item.value) : '',
       recommendation_tags: item.recommendation_tags || '',
     })
     setIsOpen(true)
@@ -179,11 +199,18 @@ export function AdminCatalog() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Valor (Texto)</Label>
+                <Label>Valor (R$)</Label>
                 <Input
                   value={form.value}
-                  placeholder="Ex: R$ 50.000,00"
-                  onChange={(e) => setForm({ ...form, value: e.target.value })}
+                  placeholder="Ex: R$ 50.000,00 ou Sob consulta"
+                  onChange={(e) => {
+                    const val = e.target.value
+                    if (val.replace(/\D/g, '').length > 0) {
+                      setForm({ ...form, value: formatBRLInput(val) })
+                    } else {
+                      setForm({ ...form, value: val })
+                    }
+                  }}
                 />
               </div>
               <div className="space-y-2">
@@ -273,21 +300,23 @@ export function AdminCatalog() {
                   <div className="space-y-2">
                     <Label>Custo por Teste (R$)</Label>
                     <Input
-                      type="number"
-                      step="0.01"
+                      type="text"
                       value={form.cost_per_test}
-                      placeholder="Ex: 2.50"
-                      onChange={(e) => setForm({ ...form, cost_per_test: e.target.value })}
+                      placeholder="Ex: R$ 2,50"
+                      onChange={(e) =>
+                        setForm({ ...form, cost_per_test: formatBRLInput(e.target.value) })
+                      }
                     />
                   </div>
                   <div className="space-y-2">
                     <Label>Ticket Médio de Venda (R$)</Label>
                     <Input
-                      type="number"
-                      step="0.01"
+                      type="text"
                       value={form.avg_ticket_price}
-                      placeholder="Ex: 15.00"
-                      onChange={(e) => setForm({ ...form, avg_ticket_price: e.target.value })}
+                      placeholder="Ex: R$ 15,00"
+                      onChange={(e) =>
+                        setForm({ ...form, avg_ticket_price: formatBRLInput(e.target.value) })
+                      }
                     />
                   </div>
                 </div>

@@ -28,8 +28,8 @@ export default function Index() {
       <HeroSection />
       <AboutSection />
       <ShowcaseSection />
-      <FAQSection />
       <PartnersSection />
+      <FAQSection />
       <ContactSection />
     </div>
   )

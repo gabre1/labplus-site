@@ -12,7 +12,10 @@ export function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
             <img
-              src="https://img.usecurling.com/p/800/600?q=logistics%20warehouse&color=gray"
+              src={
+                content.about_image_url ||
+                'https://img.usecurling.com/p/800/600?q=logistics%20warehouse&color=gray'
+              }
               alt="Infraestrutura Corporativa"
               className="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
             />

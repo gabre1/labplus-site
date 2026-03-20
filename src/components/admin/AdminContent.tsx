@@ -14,12 +14,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form'
 import { useCms } from '@/contexts/CmsContext'
 import { Trash } from 'lucide-react'
 
 const formSchema = z.object({
   logo_url: z.string().url('URL inválida').or(z.literal('')),
+  about_image_url: z.string().url('URL inválida').or(z.literal('')),
   hero_title: z.string().min(1, 'Obrigatório'),
   hero_description: z.string().min(1, 'Obrigatório'),
   about_text: z.string().min(1, 'Obrigatório'),
@@ -48,6 +50,7 @@ export function AdminContent() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       logo_url: '',
+      about_image_url: '',
       hero_title: '',
       hero_description: '',
       about_text: '',
@@ -80,6 +83,7 @@ export function AdminContent() {
 
         form.reset({
           logo_url: values.logo_url || '',
+          about_image_url: values.about_image_url || '',
           hero_title: values.hero_title || '',
           hero_description: values.hero_description || '',
           about_text: values.about_text || '',
@@ -214,6 +218,39 @@ export function AdminContent() {
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
                     <Textarea className="h-20" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="space-y-4 border p-4 rounded-md bg-white">
+            <h3 className="text-lg font-semibold text-primary">Sobre Nós</h3>
+            <FormField
+              control={form.control}
+              name="about_image_url"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>URL da Imagem (Sobre Nós)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Tamanho recomendado: 800x600px" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Tamanho recomendado: 800x600px. Esta imagem será exibida na seção "Sobre Nós".
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="about_text"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Texto da Seção Sobre</FormLabel>
+                  <FormControl>
+                    <Textarea className="h-32" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
