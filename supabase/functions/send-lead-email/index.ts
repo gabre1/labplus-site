@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'Labplus Leads <atendimento@leads.labplusdiagnostica.com.br>',
+          from: 'Labplus Leads <atendimento@labplusdiagnostica.com.br>',
           to: [finalRecipient],
           subject: 'Teste de Integração - Leads Labplus',
           html: '<p>Este é um e-mail de teste do sistema de leads da Labplus.</p>',
@@ -121,7 +121,7 @@ Deno.serve(async (req: Request) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Labplus Leads <atendimento@leads.labplusdiagnostica.com.br>',
+        from: 'Labplus Leads <atendimento@labplusdiagnostica.com.br>',
         to: [finalRecipient],
         subject: `Novo Lead Capturado: ${lead.name}`,
         html: htmlContent,
